@@ -1,7 +1,11 @@
 {
   "hosting": {
     "public": "public",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "rewrites": [
       {
         "source": "**",
@@ -17,6 +21,36 @@
           "origin": "*"
         }
       ]
-    }
+    },
+    "firestore": {
+      "port": 9900
+    },
+    "database": {
+      "port": 9901
+    },
+    "pubsub": {
+      "port": 9902
+    },
+    "storage": {
+      "port": 9903
+    },
+    "ui": {
+      "enabled": true,
+      "port": 9904
+    },
+    "singleProjectMode": true
+  },
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "remoteconfig": {
+    "template": "remoteconfig.template.json"
   }
 }
