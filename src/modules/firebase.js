@@ -3,7 +3,7 @@ import { getAnalytics } from 'firebase/analytics'
 import { getAuth, connectAuthEmulator } from 'firebase/auth'
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAfv7ntg-wlSrBUn4A7BK_-REIPExAw6XY',
+  apiKey: '',
   authDomain: 'databox-84f3c.firebaseapp.com',
   projectId: 'databox-84f3c',
   storageBucket: 'databox-84f3c.appspot.com',
