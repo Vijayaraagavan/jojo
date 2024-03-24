@@ -35,7 +35,13 @@ a,
 }
 
 .bg-cover {
-  background-image: url("src/assets/bg.jpg");
+  background-image: url('src/assets/bg.jpg');
   background-position: center center;
   background-size: cover;
+}
+.slate--text {
+  color: #708090;
+}
+.icon-hover:hover {
+  color: #0a205a;
 }

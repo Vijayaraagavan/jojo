@@ -1,10 +1,25 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import { snackbar, snackMessage, snackColor, reset } from '@/composables/snackbar';
+import { authorized } from '@/modules/auth/auth.js';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
+const router = useRouter();
+authorized()
+  .then((s) => {
+    const user = useUserStore();
+    user.setId(s.uid);
+  })
+  .catch((f) => {
+    console.log("no saved", f)
+  })
 </script>
 
 <template>
-  <!-- <header>
+  <v-layout>
+
+    <!-- <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
@@ -16,7 +31,18 @@ import HelloWorld from './components/HelloWorld.vue'
       </nav>
     </div>
   </header> -->
-  <RouterView />
+    <v-snackbar v-model="snackbar" :color="snackColor" tile location="top right">
+      <span>{{ snackMessage }}</span>
+      <template v-slot:actions>
+        <v-btn fab x-small max-height="25" max-width="25" color="white" elevation="0" @click="reset()">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
+
+    <RouterView />
+  </v-layout>
+
 </template>
 <style>
 body {
