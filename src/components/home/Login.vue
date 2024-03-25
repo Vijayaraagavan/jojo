@@ -78,6 +78,7 @@ import { onMounted } from 'vue';
 import { signInWithEmail, authorized, save as saveSession, signInWithProvider } from '@/modules/auth/auth.js';
 import { ref } from 'vue';
 import { showSnack } from '@/composables/snackbar';
+import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 const loader = ref(false);
 const logins = ref(null);
@@ -92,13 +93,15 @@ const login = () => {
     startLoader();
     console.log(email.value, password.value)
     signInWithEmail(email.value, password.value)
-        .then(() => {
+        .then((user) => {
             showSnack("Login successfull");
             console.log(remember.value)
             if (remember.value) {
                 saveSession();
             }
-            router.push({ name: "dashboards" })
+            const { setId } = useUserStore();
+            setId(user.uid);
+            router.push({ name: "info" })
         })
         .catch(() => {
             console.log("lalunche")
@@ -111,13 +114,15 @@ const login = () => {
         })
 }
 const providerLogin = (id) => {
-    signInWithProvider(id, () => {
+    signInWithProvider(id, (user) => {
         showSnack("Login successfull");
+        const { setId } = useUserStore();
+        setId(user.uid);
         console.log(remember.value)
         if (remember.value) {
             saveSession();
         }
-        router.push({ name: "dashboards" })
+        router.push({ name: "info" })
     })
 }
 const validateEmail = () => {

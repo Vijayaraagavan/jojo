@@ -5,8 +5,8 @@ import { all } from '@/modules/database/main';
 import { onMounted } from 'vue';
 const router = useRouter();
 
-import { ref, defineProps } from 'vue';
-const props = defineProps(['showNav']);
+import { ref } from 'vue';
+const nav = defineModel('nav');
 const index = [
     {
         id: 'transactions',
@@ -19,11 +19,10 @@ const index = [
         routeName: 'settings'
     }
 ]
-const nav = ref(props.showNav);
 const routeTo = (i) => {
+    nav.value = false;
     router.push({ name: i.routeName })
 }
-console.log(nav.value)
 </script>
 
 <template>

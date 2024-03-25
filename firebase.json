@@ -16,6 +16,7 @@
   "emulators": {
     "auth": {
       "port": 9099,
+      "host": "0.0.0.0",
       "cors": [
         {
           "origin": "*"
@@ -23,16 +24,20 @@
       ]
     },
     "firestore": {
-      "port": 9900
+      "port": 9900,
+      "host": "0.0.0.0"
     },
     "database": {
-      "port": 9901
+      "port": 9901,
+      "host": "0.0.0.0"
     },
     "pubsub": {
-      "port": 9902
+      "port": 9902,
+      "host": "0.0.0.0"
     },
     "storage": {
-      "port": 9903
+      "port": 9903,
+      "host": "0.0.0.0"
     },
     "ui": {
       "enabled": true,

@@ -22,10 +22,10 @@ const app = initializeApp(firebaseConfig)
 const analytics = getAnalytics(app)
 // auth
 const auth = getAuth(app)
-connectAuthEmulator(auth, 'http://127.0.0.1:9099')
+connectAuthEmulator(auth, 'http://192.168.0.105:9099')
 auth.languageCode = 'it'
 //db
 const db = getFirestore(app)
-connectFirestoreEmulator(db, '127.0.0.1', 9900)
+connectFirestoreEmulator(db, '192.168.0.105', 9900)
 
 export { analytics, auth, db }

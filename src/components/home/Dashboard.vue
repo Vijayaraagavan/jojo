@@ -6,9 +6,12 @@ import SideNav from './SideNav.vue';
 // import Info from './Info.vue';
 import { onMounted } from 'vue';
 import { ref } from 'vue';
+import { clearAll } from '@/composables/index';
+import { vuetify } from '@/modules/vuetify';
 
 const router = useRouter();
 const logout = () => {
+    clearAll();
     signOut(() => {
         router.push({ name: 'login' });
     });
@@ -17,11 +20,15 @@ const fetchDocs = () => {
     all();
 }
 const showNav = ref(false);
+const mobileWid = {
+    width: vuetify.display.xs ? 100 + 'vw' : 90 + 'vw',
+    padding: '0px'
+}
 onMounted(fetchDocs)
 </script>
 
 <template>
-    <v-container fluid style="width: 90vw;">
+    <v-container fluid :style="mobileWid">
         <v-app-bar color="indigo lighten-3" class="align-center" density="compact">
             <v-app-bar-nav-icon @click="showNav = !showNav"></v-app-bar-nav-icon>
             <v-row class="align-center justify-center">
@@ -39,8 +46,9 @@ onMounted(fetchDocs)
                 </v-col>
             </v-row>
         </v-app-bar>
-        <v-navigation-drawer v-model="showNav" class="bg-indigo bg-lighten-3" theme="dark" permanent style="top: 15px;">
-            <SideNav class="mt-4" />
+        <v-navigation-drawer v-model="showNav" absolute="" class="bg-indigo bg-lighten-3" theme="dark"
+            style="top: 15px;">
+            <SideNav class="mt-4" v-model:nav="showNav" />
             <template v-slot:append>
                 <div class="pa-2 d-flex justify-center ml-4">
                     <v-btn block>
@@ -49,7 +57,7 @@ onMounted(fetchDocs)
                 </div>
             </template>
         </v-navigation-drawer>
-        <v-main>
+        <v-main class="ma-2 mr-6">
             <router-view></router-view>
         </v-main>
     </v-container>

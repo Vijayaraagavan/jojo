@@ -1,5 +1,5 @@
 <template>
-    <v-card width="500" color="transparent">
+    <v-card color="transparent">
         <v-card-text>
             <v-btn color="success" icon large @click="newTransaction()"><v-icon>mdi-plus</v-icon></v-btn>
         </v-card-text>

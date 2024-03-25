@@ -1,5 +1,6 @@
 import { db } from '@/modules/firebase'
-import { addDoc, collection, getDocs } from 'firebase/firestore'
+import { addDoc, collection, getDocs, orderBy, query } from 'firebase/firestore'
+import { dToStr, dateTimeToStr } from '../dateTime'
 
 const all = () => {
   const items = []
@@ -30,28 +31,54 @@ const writeDoc = async (doc, data) => {
 }
 
 const addExpense = (data) => {
-  addDoc(collection(db, 'expense'), data)
-    .then((snapshot) => {
-      console.log('filter docs', snapshot)
-    })
-    .catch((err) => console.log(err))
+  return new Promise((s, f) => {
+    addDoc(collection(db, 'expense'), data)
+      .then((snapshot) => {
+        console.log('filter docs', snapshot);
+        s('Expense added')
+      })
+      .catch((err) => {
+        console.log(err)
+        f('Operation failed due to ' + err.errorMessage)
+      } 
+      )
+  })
 }
 
 const getExpenses = (id) => {
   return new Promise((s, f) => {
-    const items = []
-    getDocs(collection(db, 'expense'))
+    if (!id) {
+      s([]);
+      return;
+    }
+    const items = [];
+    let count = 1;
+    const cl = collection(db, 'expense');
+    const q = query(cl, orderBy('dateTime', 'desc'));
+    getDocs(q)
       .then((snapshot) => {
         snapshot.docs.forEach((item) => {
           if (item.data().userId == id) {
             console.log(item.data().userId, id)
-            items.push(item.data())
+            items.push(formatExpense(item.data(), count));
+            count++;
           }
         })
         s(items)
       })
       .catch((err) => f(err))
   })
+}
+
+const formatExpense = (data, count) => {
+  return {
+    id: count,
+    dateTime: dateTimeToStr(data.dateTime),
+    amount: data.amount,
+    amountStr: data.amountStr,
+    title: data.title,
+    userId: data.userId
+  }
 }
 
 export { all, writeDoc, addExpense, getExpenses }

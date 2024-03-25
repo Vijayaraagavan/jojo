@@ -20,7 +20,6 @@
 </template>
 
 <script setup>
-import { defineEmits } from 'vue';
 const emit = defineEmits(['numvalue']);
 const num = [
     { label: '1', value: 1 },

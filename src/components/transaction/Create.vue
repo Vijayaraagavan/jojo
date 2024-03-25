@@ -1,12 +1,12 @@
 <template>
-    <v-card width="400">
+    <v-card max-width="400">
         <v-card-text>
             <v-form>
                 <v-row>
                     <v-col cols="12">
                         <label for="expense_name">Expense Type</label>
-                        <v-text-field name="expense_name" id="expense_name" class="mt-2"
-                            v-model="expenseTitle"></v-text-field>
+                        <v-text-field name="expense_name" id="expense_name" class="mt-2" v-model="expenseTitle"
+                            placeholder="purpose of expense"></v-text-field>
                     </v-col>
                     <v-col cols="12">
                         <label for="numpad">Amount</label>
@@ -75,14 +75,16 @@ import 'vue3-timepicker/dist/VueTimepicker.css'
 import Numpad from '@/components/transaction/Numpad.vue';
 import { useUserStore } from '@/stores/user';
 import { onMounted } from 'vue';
+import { showSnack } from '@/composables/snackbar';
 import { addExpense } from '@/modules/database/main'
+import { tToStr } from '@/modules/dateTime';
 const datePicker = ref(false);
 const timePicker = ref(false);
 const date = ref(new Date())
 const time = ref('7:28 PM')
 const numpad = ref(false);
 const amount = ref(0);
-const expenseTitle = ref('expense');
+const expenseTitle = ref('');
 const showTimer = () => {
     datePicker.value = false;
     timePicker.value = true;
@@ -92,18 +94,19 @@ const setDateTime = () => {
     timePicker.value = false;
 }
 const initTime = () => {
-    const d = new Date();
-    const h = d.getHours();
-    const m = d.getMinutes();
-    let r = '';
-    if (h > 12) {
-        r += (h - 12);
-    } else {
-        r += h;
-    }
-    r += `:${m} `
-    r += h > 12 ? 'PM' : 'AM'
-    time.value = r;
+    // const d = new Date();
+    // const h = d.getHours();
+    // const m = d.getMinutes();
+    // let r = '';
+    // if (h > 12) {
+    //     r += (h - 12);
+    // } else {
+    //     r += h;
+    // }
+    // r += `:${m} `
+    // r += h > 12 ? 'PM' : 'AM'
+    // time.value = r;
+    time.value = tToStr(Date.now());
 }
 onMounted(initTime);
 
@@ -132,13 +135,25 @@ const create = () => {
     date.value.setMinutes(mm);
     let payload = {
         userId: user.id,
-        title: expenseTitle.value,
+        title: expenseTitle.value == '' ? 'expense' : expenseTitle.value,
         amount: amount.value,
         amountStr: numStr.value,
         dateTime: date.value.getTime(),
         createdAt: Date.now()
     }
     console.log(payload);
-    addExpense(payload);
+    addExpense(payload)
+        .then(msg => {
+            showSnack(msg);
+            resetForm();
+        })
+        .catch(msg => showSnack(msg, 'error'))
+}
+const resetForm = () => {
+    expenseTitle.value = '';
+    amount.value = 0;
+    date.value = new Date();
+    initTime();
+
 }
 </script>

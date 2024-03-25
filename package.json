@@ -4,14 +4,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "firebase:dev": "FIRESTORE_EMULATOR_PERSISTENCE=true firebase emulators:start --only firestore,auth --import=./firebase/data --export-on-exit"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "date-fns": "^3.6.0",
     "firebase": "^10.9.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
