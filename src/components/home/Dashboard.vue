@@ -46,7 +46,7 @@ onMounted(fetchDocs)
                 </v-col>
             </v-row>
         </v-app-bar>
-        <v-navigation-drawer v-model="showNav" absolute="" class="bg-indigo bg-lighten-3" theme="dark"
+        <v-navigation-drawer v-model="showNav" absolute temporary class="bg-indigo bg-lighten-3" theme="dark"
             style="top: 15px;">
             <SideNav class="mt-4" v-model:nav="showNav" />
             <template v-slot:append>
@@ -57,7 +57,7 @@ onMounted(fetchDocs)
                 </div>
             </template>
         </v-navigation-drawer>
-        <v-main class="ma-2 mr-6">
+        <v-main class="ma-2 mr-6" style="width: 85%;">
             <router-view></router-view>
         </v-main>
     </v-container>

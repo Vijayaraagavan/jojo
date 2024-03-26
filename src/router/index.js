@@ -40,6 +40,11 @@ const router = createRouter({
           path: 'transactions',
           name: 'transactions',
           component: () => import('@/components/transaction/List.vue')
+        },
+        {
+          path: 'teams',
+          name: 'teams',
+          component: () => import('@/components/splits/Home.vue')
         }
       ]
     },

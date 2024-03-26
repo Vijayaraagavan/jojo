@@ -21,7 +21,7 @@ const creatUserWithEmail = (email, password) => {
       .then((userCredential) => {
         // Signed up
         const user = userCredential.user
-        console.log('created', user)
+        // console.log('created', user)
         s(user)
         // ...
       })
@@ -41,7 +41,7 @@ const signInWithEmail = (email, password) => {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user
-        console.log('logged in', userCredential)
+        // console.log('logged in', userCredential)
         s(user)
         // ...
       })
@@ -63,7 +63,7 @@ const signInWithProvider = (id, cb) => {
       const token = credential.accessToken
       // The signed-in user info.
       const user = result.user
-      console.log('google user', user)
+      // console.log('google user', user)
       cb(user)
       // IdP data available using getAdditionalUserInfo(result)
       // ...
@@ -73,7 +73,6 @@ const signInWithProvider = (id, cb) => {
       const errorCode = error.code
       const errorMessage = error.message
       // The email of the user's account used.
-      const email = error.customData.email
       // The AuthCredential type that was used.
       const credential = GoogleAuthProvider.credentialFromError(error)
       console.log('google error', error)
@@ -96,7 +95,7 @@ const getProvider = (id) => {
 const authorized = () => {
   return new Promise((s, f) => {
     auth.onAuthStateChanged((user) => {
-      console.log('aft', user)
+      // console.log('aft', user)
       if (user != null) {
         s(user)
       } else {
@@ -107,10 +106,9 @@ const authorized = () => {
 }
 
 const save = () => {
-  console.log('svings ')
   setPersistence(auth, browserLocalPersistence)
-    .then((resp) => {
-      console.log(resp)
+    .then(() => {
+      // console.log(resp)
     })
     .catch((err) => {
       console.log(err)
