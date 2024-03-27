@@ -69,3 +69,42 @@ export const joinGroupByRef = (userId, refId, name) => {
       .catch((err) => console.log(err))
   })
 }
+
+export const getGroupUsers = (memberIds) => {
+  const clRef = collection(db, 'users')
+  const q = query(clRef, where('uid', 'in', memberIds))
+  const users = []
+  return new Promise((s, f) => {
+    getDocs(q)
+      .then((snap) => {
+        snap.docs.forEach((d) => {
+          users.push({ ...d.data(), id: d.id })
+        })
+        s(users)
+      })
+      .catch((err) => {
+        console.log(err)
+        f(err)
+      })
+  })
+}
+
+export const getGroup = (id) => {
+  const clRef = collection(db, 'groups')
+  const docRef = doc(db, 'groups', id)
+  return new Promise((s, f) => {
+    getDoc(docRef).then((snap) => {
+      const d = snap.data()
+      s({ ...d, id: snap.id })
+    })
+  })
+}
+
+export const addSplit = (data) => {
+  const clRef = collection(db, 'group_transactions')
+  return new Promise((s, f) => {
+    addDoc(clRef, data)
+      .then(() => s())
+      .catch(() => f('Split creation failed'))
+  })
+}

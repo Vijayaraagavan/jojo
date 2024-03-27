@@ -19,6 +19,7 @@ import { getUserGroups } from '@/modules/database/groups';
 import { onMounted, computed } from 'vue';
 import { useUserStore } from '@/stores/user';
 import Group from './Group.vue';
+import { watchEffect } from 'vue';
 const tab = ref('');
 const groups = ref([]);
 const currentGroup = ref(null);
@@ -29,10 +30,12 @@ const init = () => {
     const { id } = useUserStore();
     getUserGroups(id)
         .then(groupDocs => {
-            groupDocs.forEach(i => groups.value.push(i))
+            groupDocs.forEach(i => groups.value.push(i));
+            tab.value = groups.value && groups.value.length > 0 && groups.value[0].docId;
+            changeTab();
         })
 }
-onMounted(() => {
+watchEffect(() => {
     init();
 })
 </script>

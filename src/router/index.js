@@ -45,6 +45,11 @@ const router = createRouter({
           path: 'teams',
           name: 'teams',
           component: () => import('@/components/splits/Home.vue')
+        },
+        {
+          path: 'split/:groupId',
+          name: 'split',
+          component: () => import('@/components/splits/Split.vue')
         }
       ]
     },

@@ -6,7 +6,7 @@
                     <v-col cols="12">
                         <label for="expense_name">Expense Type</label>
                         <v-text-field name="expense_name" id="expense_name" class="mt-2" v-model="expenseTitle"
-                            placeholder="purpose of expense"></v-text-field>
+                            @change="emitter()" placeholder="purpose of expense"></v-text-field>
                     </v-col>
                     <v-col cols="12">
                         <label for="numpad">Amount</label>
@@ -61,7 +61,7 @@
                 </v-row>
             </v-form>
         </v-card-text>
-        <v-col cols="12">
+        <v-col cols="12" v-if="!props.reactive">
             <v-btn color="success" block @click="create()">Add</v-btn>
         </v-col>
     </v-card>
@@ -78,6 +78,9 @@ import { onMounted } from 'vue';
 import { showSnack } from '@/composables/snackbar';
 import { addExpense } from '@/modules/database/main'
 import { tToStr } from '@/modules/dateTime';
+import { watch } from 'vue';
+const props = defineProps(['reactive', 'totalAmount']);
+const emit = defineEmits(['splitInput'])
 const datePicker = ref(false);
 const timePicker = ref(false);
 const date = ref(new Date())
@@ -92,6 +95,7 @@ const showTimer = () => {
 const setDateTime = () => {
     console.log(date.value, time.value);
     timePicker.value = false;
+    emitter();
 }
 const initTime = () => {
     // const d = new Date();
@@ -118,6 +122,7 @@ const dateTime = computed(() => {
 const getNumValue = (v) => {
     amount.value = v;
     numpad.value = false;
+    emitter();
 }
 const numStr = computed(() => amount.value.toFixed(2));
 const extractTime = () => {
@@ -128,17 +133,21 @@ const extractTime = () => {
         h: tf.includes('PM') ? Number(hourStr) + 12 : Number(hourStr)
     }
 }
-const create = () => {
-    const user = useUserStore();
+const finalTime = computed(() => {
     const { h: hh, m: mm } = extractTime();
     date.value.setHours(hh);
     date.value.setMinutes(mm);
+    return date.value.getTime();
+})
+const create = () => {
+    const user = useUserStore();
+
     let payload = {
         userId: user.id,
         title: expenseTitle.value == '' ? 'expense' : expenseTitle.value,
         amount: amount.value,
         amountStr: numStr.value,
-        dateTime: date.value.getTime(),
+        dateTime: finalTime.value,
         createdAt: Date.now()
     }
     console.log(payload);
@@ -154,6 +163,18 @@ const resetForm = () => {
     amount.value = 0;
     date.value = new Date();
     initTime();
-
 }
+const emitter = () => {
+    const data = {
+        title: expenseTitle.value,
+        amount: amount.value,
+        date: finalTime.value,
+        amountStr: numStr.value
+    }
+    emit('splitInput', data);
+}
+emitter();
+watch(() => props.totalAmount, (v) => {
+    amount.value = Number(v);
+})
 </script>
