@@ -6,8 +6,11 @@ import {
   getDocs,
   query,
   updateDoc,
-  where
+  where,
+  documentId
 } from 'firebase/firestore'
+import { addUserToGroup, getUser } from './users'
+import { dToStr, dateTimeToStr } from '../dateTime'
 import { db } from '../firebase'
 
 export const newGroup = (group) => {
@@ -20,7 +23,10 @@ export const newGroup = (group) => {
     //     f('Group name already exist')
     //   } else {
     addDoc(clRef, group)
-      .then(() => s('Group created successfully'))
+      .then((resp) => {
+        addUserToGroup(group.members[0], resp.id)
+        s('Group created successfully')
+      })
       .catch(() => f('failed to create group'))
     //   }
     // })
@@ -63,7 +69,9 @@ export const joinGroupByRef = (userId, refId, name) => {
         if (!oGroup.members.includes(userId)) {
           oGroup.members.push(userId)
         }
-        updateDoc(snap.docs[0].ref, oGroup)
+        updateDoc(snap.docs[0].ref, oGroup).then(() => {
+          addUserToGroup(userId, snap.docs[0].id)
+        })
         s(oGroup)
       })
       .catch((err) => console.log(err))
@@ -78,7 +86,11 @@ export const getGroupUsers = (memberIds) => {
     getDocs(q)
       .then((snap) => {
         snap.docs.forEach((d) => {
-          users.push({ ...d.data(), id: d.id })
+          users.push({
+            ...d.data(),
+            id: d.id,
+            color: Math.floor(Math.random() * 16777215).toString(16)
+          })
         })
         s(users)
       })
@@ -99,6 +111,19 @@ export const getGroup = (id) => {
     })
   })
 }
+export const getGroups = (ids) => {
+  const clRef = collection(db, 'groups')
+  const q = query(clRef, where(documentId(), 'in', ids))
+  const groups = []
+  return new Promise((s, f) => {
+    getDocs(q).then((snap) => {
+      snap.docs.forEach((d) => {
+        groups.push({ ...d.data(), id: d.id })
+      })
+      s(groups)
+    })
+  })
+}
 
 export const addSplit = (data) => {
   const clRef = collection(db, 'group_transactions')
@@ -107,4 +132,54 @@ export const addSplit = (data) => {
       .then(() => s())
       .catch(() => f('Split creation failed'))
   })
+}
+
+export const groupTransactions = (uid) => {
+  return new Promise((s, f) => {
+    if (!uid) {
+      f('no proper id')
+      return
+    }
+    const clRef = collection(db, 'group_transactions')
+    const resp = []
+    const groups = []
+    let count = 1
+    getUser(uid).then((user) => {
+      const q = query(clRef, where('groupId', 'in', user.groups))
+      getDocs(q)
+        .then((snap) => {
+          snap.docs.forEach((d) => {
+            // resp.push({ ...d.data(), id: d.id })
+            const data = d.data()
+            resp.push(formatExpense(data, d.id, count))
+            if (!groups.includes(data.groupId)) {
+              groups.push(data.groupId)
+            }
+            count++
+          })
+
+          s({
+            resp,
+            groups
+          })
+        })
+        .catch((err) => {
+          console.log(err)
+          f('Error while fetching')
+        })
+    })
+  })
+}
+
+const formatExpense = (d, id, count) => {
+  return {
+    id: count,
+    dateTime: dateTimeToStr(d.dateTime),
+    amount: d.amount,
+    amountStr: d.amountStr,
+    title: d.title,
+    userId: d.userId,
+    group: d.group,
+    groupId: d.groupId
+  }
 }

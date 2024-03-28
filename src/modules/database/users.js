@@ -27,6 +27,51 @@ export const insert = (user) => {
   })
 }
 
+export const addUserToGroup = (uid, groupId) => {
+  const clRef = collection(db, 'users')
+  const q = query(clRef, where('uid', '==', uid))
+  return new Promise((s, f) => {
+    getDocs(q).then((snap) => {
+      if (snap.docs.length == 1) {
+        const d = snap.docs[0]
+        const user = addGroupId(d.data(), groupId)
+        updateDoc(d.ref, user)
+      } else {
+        f('user not found')
+      }
+    })
+  })
+}
+
+const addGroupId = (data, groupId) => {
+  if (data.groups) {
+    if (data.groups.includes(groupId)) {
+      return data
+    } else {
+      data.groups.push(groupId)
+      return data
+    }
+  } else {
+    data.groups = [groupId]
+    return data
+  }
+}
+
+export const getUser = (uid) => {
+  const clRef = collection(db, 'users')
+  const q = query(clRef, where('uid', '==', uid))
+  return new Promise((s, f) => {
+    getDocs(q).then((snap) => {
+      if (snap.docs.length == 1) {
+        const d = snap.docs[0]
+        s({ ...d.data(), id: d.id })
+      } else {
+        f('user not found')
+      }
+    })
+  })
+}
+
 const marshallUser = (u) => {
   const cuser = u.email.split('@')
   const dName = !u.displayName ? cuser[0] : u.displayName

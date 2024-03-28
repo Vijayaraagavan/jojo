@@ -16,7 +16,7 @@
 import { ref } from 'vue';
 import NewGroup from './NewGroup.vue';
 import { getUserGroups } from '@/modules/database/groups';
-import { onMounted, computed } from 'vue';
+// import { onMounted, computed } from 'vue';
 import { useUserStore } from '@/stores/user';
 import Group from './Group.vue';
 import { watchEffect } from 'vue';
