@@ -1,8 +1,10 @@
 <template>
     <v-row>
         <v-col>
-            <Create reactive="true" @split-input="getSplitInput" :total-amount="totalAmount" />
-            <v-btn color="success" block class="mt-2" @click="createSplit()">Add</v-btn>
+            <v-card flat max-width="400" color="transparent">
+                <Create reactive="true" @split-input="getSplitInput" :total-amount="totalAmount" />
+                <v-btn color="success" block class="mt-2" @click="createSplit()">Add</v-btn>
+            </v-card>
         </v-col>
         <v-col>
             <v-card max-width="400" color="transparent">
@@ -26,32 +28,71 @@
                     </div>
                 </v-toolbar>
                 <v-card-text class="pa-0">
-                    <div class="d-flex justify-end mt-2">
-                        <v-btn color="success" variant="outlined" @click="openCalc()">Edit</v-btn>
-                    </div>
-                    <v-card v-for="u in users" class="my-2 align-center">
-                        <v-card-text>
-                            <v-row align-center class="align-center">
-                                <v-col cols="3">
-                                    <!-- <div class="d-flex flex-column align-start">
-                                        <h3 class="mb-1">{{ u.displayName }}</h3> -->
-                                    <UserIcon :user="u" />
-                                    <!-- </div> -->
-                                </v-col>
-                                <v-col cols="7">
-                                    <div class="d-flex flex-column align-end ml-4">
-                                        <h3 class="">{{ u.displayName }}</h3>
-                                        <h3 class="font-weight-bold success--text text-success" color="success">{{
-                u.amount }}</h3>
+                    <v-expansion-panels color="error">
+                        <v-expansion-panel expand focusable bg-color="transparent">
+                            <v-expansion-panel-title class="d-block mb-0 pa-0 pt-2">
+                                <template v-slot:actions>
+                                    <!-- <v-icon>mdi-close</v-icon> -->
+                                </template>
+                                <template v-slot:default="actionsProps" style="display: block;">
+                                    <div class="d-flex justify-space-between">
+                                        <v-btn color="success" variant="outlined" @click.stop="openCalc()">Edit</v-btn>
+                                        <v-btn icon flat density="compact"><v-icon>mdi-chevron-down</v-icon></v-btn>
                                     </div>
-                                </v-col>
-                                <v-col cols="2">
-                                    <v-checkbox hide-details="" density="compact" color="indigo darken-4"
-                                        v-model="u.selected" @change="calculateBox()"></v-checkbox>
-                                </v-col>
-                            </v-row>
-                        </v-card-text>
-                    </v-card>
+                                    <v-card v-for="u in users.slice(0, 2)" class="my-2 align-center">
+                                        <v-card-text>
+                                            <v-row align-center class="align-center">
+                                                <v-col cols="3">
+                                                    <UserIcon :user="u" />
+                                                </v-col>
+                                                <v-col cols="7">
+                                                    <div class="d-flex flex-column align-end ml-4">
+                                                        <h3 class="">{{ u.displayName }}</h3>
+                                                        <h3 class="font-weight-bold success--text text-success"
+                                                            color="success">
+                                                            {{
+                    u.amount }}</h3>
+                                                    </div>
+                                                </v-col>
+                                                <v-col cols="2">
+                                                    <v-checkbox hide-details="" density="compact" @click.stop=""
+                                                        color="indigo darken-4" v-model="u.selected"
+                                                        @change="calculateBox()"></v-checkbox>
+                                                </v-col>
+                                            </v-row>
+                                        </v-card-text>
+                                    </v-card>
+                                </template>
+                            </v-expansion-panel-title>
+                            <v-expansion-panel-text style="position: relative; top: -30px;" class="pa-0">
+                                <v-card v-for="u in users.slice(2)" class="my-2 align-center">
+                                    <v-card-text>
+                                        <v-row align-center class="align-center">
+                                            <v-col cols="3">
+                                                <!-- <div class="d-flex flex-column align-start">
+                                                    <h3 class="mb-1">{{ u.displayName }}</h3> -->
+                                                <UserIcon :user="u" />
+                                                <!-- </div> -->
+                                            </v-col>
+                                            <v-col cols="7">
+                                                <div class="d-flex flex-column align-end ml-4">
+                                                    <h3 class="">{{ u.displayName }}</h3>
+                                                    <h3 class="font-weight-bold success--text text-success"
+                                                        color="success">
+                                                        {{
+                    u.amount }}</h3>
+                                                </div>
+                                            </v-col>
+                                            <v-col cols="2">
+                                                <v-checkbox hide-details="" density="compact" color="indigo darken-4"
+                                                    v-model="u.selected" @change="calculateBox()"></v-checkbox>
+                                            </v-col>
+                                        </v-row>
+                                    </v-card-text>
+                                </v-card>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                    </v-expansion-panels>
                 </v-card-text>
             </v-card>
         </v-col>
@@ -238,9 +279,13 @@ const createSplit = () => {
 }
 </script>
 <style scoped>
-.custom-text-field ::v-deep .v-input__control input {
+.custom-text-field :deep(.v-input__control input) {
     color: var(--v-theme-success);
     font-size: 20px;
     font-weight: 500;
+}
+
+.v-expansion-panel-text :deep(.v-expansion-panel-text__wrapper) {
+    padding: 8px 0 0;
 }
 </style>
