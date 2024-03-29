@@ -1,5 +1,5 @@
 <template>
-    <div class="icon"
+    <div class="icon text-capitalize"
         :style="{ backgroundColor: `#${props.user.color}`, fontSize: `${props.size}px`, width: `${props.size * 2}px`, height: `${props.size * 2}px` }">
         {{ first }}
     </div>
@@ -33,6 +33,6 @@ const first = computed(() => {
     align-items: center;
     color: white;
     /* font-size: 20px; */
-    font-weight: 700;
+    font-weight: 500;
 }
 </style>

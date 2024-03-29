@@ -2,8 +2,10 @@
     <v-row>
         <v-col>
             <v-card flat max-width="400" color="transparent">
-                <Create reactive="true" @split-input="getSplitInput" :total-amount="totalAmount" />
-                <v-btn color="success" block class="mt-2" @click="createSplit()">Add</v-btn>
+                <Create reactive="true" @split-input="getSplitInput" :total-amount="totalAmount" :old-title="oldTitle"
+                    :old-date="oldDate" v-if="createLoader" />
+                <v-btn v-if="props.updateSplit" color="success" block class="mt-2" @click="createSplit()">Update</v-btn>
+                <v-btn v-else color="success" block class="mt-2" @click="createSplit()">Add</v-btn>
             </v-card>
         </v-col>
         <v-col>
@@ -51,7 +53,7 @@
                                                         <h3 class="font-weight-bold success--text text-success"
                                                             color="success">
                                                             {{
-                    u.amount }}</h3>
+                        u.amount }}</h3>
                                                     </div>
                                                 </v-col>
                                                 <v-col cols="2">
@@ -80,7 +82,7 @@
                                                     <h3 class="font-weight-bold success--text text-success"
                                                         color="success">
                                                         {{
-                    u.amount }}</h3>
+                        u.amount }}</h3>
                                                 </div>
                                             </v-col>
                                             <v-col cols="2">
@@ -114,7 +116,7 @@
                     <h4 style="width: 90%;">Total</h4>
                     <v-spacer></v-spacer>
                     <v-text-field name="name" :id="`id-total`" hide-details="" class="custom-text-field text-success"
-                        v-model="totalAmount"></v-text-field>
+                        v-model="totalAmount" @input="calculateBox()"></v-text-field>
                 </div>
             </v-toolbar>
             <v-card-text>
@@ -156,25 +158,35 @@
 </template>
 <script setup>
 import Create from '@/components/transaction/Create.vue';
-import { getGroupUsers, getGroup, addSplit } from '@/modules/database/groups';
+import { getGroupUsers, getGroup, addSplit, modifySplit } from '@/modules/database/groups';
 import { useUserStore } from '@/stores/user';
 import { onMounted, ref } from 'vue';
 import UserIcon from './UserIcon.vue';
 import { useRoute } from 'vue-router';
 import { showSnack } from '@/composables/snackbar';
+const props = defineProps(['updateSplit']);
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const route = useRoute();
 const group = ref({});
 const users = ref([]);
 const payer = ref('');
 const { id: currentUser } = useUserStore();
 const dialog = ref(false);
-const totalAmount = ref(45);
+const totalAmount = ref(0);
 const valid = ref(false);
+const oldTitle = ref('');
+const oldDate = ref(null);
+const createLoader = ref(false);
+
 const childData = {
     title: '',
     date: null
 }
 const getSplitInput = (v) => {
+    if (!v.amount) {
+        return;
+    }
     totalAmount.value = v.amount;
     childData.title = v.title;
     childData.date = v.date;
@@ -222,10 +234,48 @@ const getColor = () => {
     return c;
 }
 onMounted(() => {
-    getGroup(route.params.groupId)
+    let groupId = route.params.groupId;
+    if (props.updateSplit) {
+        groupId = props.updateSplit.groupId;
+    }
+    getGroup(groupId)
         .then(g => {
             group.value = g;
-            getUsers(g.members);
+            getGroupUsers(g.members)
+                .then(u => {
+                    const share = Number((totalAmount.value / u.length).toFixed(2));
+                    u.forEach(e => {
+                        e.color = getColor();
+                        e.selected = true;
+                        e.alr = false;
+                        e.amount = share;
+                        const old = props.updateSplit && props.updateSplit.group.find(i => i.uid == e.uid);
+                        if (props.updateSplit) {
+                            if (old) {
+                                e.amount = old.amount;
+                            } else {
+                                e.amount = 0;
+                            }
+                            if (old.amount <= 0) {
+                                e.selected = false;
+                            }
+
+                        }
+                        users.value.push(e);
+                    });
+                    if (props.updateSplit) {
+                        payer.value = props.updateSplit.userId;
+                        totalAmount.value = props.updateSplit.amount;
+                        oldTitle.value = props.updateSplit.title;
+                        oldDate.value = new Date(props.updateSplit.dateTimeInSec);
+                    } else {
+                        payer.value = users.value[0].uid;
+                        if (currentUser) {
+                            payer.value = currentUser;
+                        }
+                    }
+                    createLoader.value = true;
+                })
         })
 })
 
@@ -256,7 +306,7 @@ const calculateBox = () => {
     })
 }
 const createSplit = () => {
-    let numStr = totalAmount.value.toFixed(2);
+    let numStr = Number(totalAmount.value).toFixed(2);
     const groups = [];
     users.value.forEach(u => {
         groups.push({
@@ -274,8 +324,17 @@ const createSplit = () => {
         group: groups,
         groupId: group.value.id
     }
-    addSplit(payload)
-        .then(() => showSnack("split check created"))
+    if (props.updateSplit) {
+        modifySplit(props.updateSplit.uid, payload)
+            .then(() => handleSuccess("split check modified"))
+    } else {
+        addSplit(payload)
+            .then(() => handleSuccess("split check created"))
+    }
+}
+const handleSuccess = (msg) => {
+    showSnack(msg);
+    router.push({ name: 'splitTransactions' })
 }
 </script>
 <style scoped>

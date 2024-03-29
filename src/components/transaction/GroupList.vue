@@ -25,9 +25,18 @@
 </template>
 </v-text-field>
 </v-card> -->
+        <Info v-model:dialog="infoDialog" :split="selectedSplit" />
         <v-data-table :headers="headers" :items="transactions" :loading="loading" v-if="$vuetify.display.smAndUp">
-            <template #item.splits="splitItem">
-                <SplitIcons :members="splitItem.item.group" />
+            <!-- <template #item.splits="splitItem">
+            </template> -->
+            <template #item="{ item }">
+                <tr @click="showInfo(item)" style="cursor: pointer;">
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.title }}</td>
+                    <SplitIcons :members="item.group" />
+                    <td>{{ item.amount }}</td>
+                    <td>{{ item.dateTime }}</td>
+                </tr>
             </template>
             <template v-slot:headers="{ columns, isSorted, getSortIcon, toggleSort }">
                 <tr>
@@ -44,11 +53,11 @@
                 </tr>
             </template>
         </v-data-table>
-        <!-- <v-card color="transparent" v-if="$vuetify.display.xs">
+        <v-card color="transparent" v-if="$vuetify.display.xs">
             <v-card-text class="scroll-it pa-0">
-                <CardList v-for="t in transactions" :transaction="t" />
+                <SplitCardList v-for="t in transactions" :transaction="t" />
             </v-card-text>
-        </v-card> -->
+        </v-card>
     </div>
 </template>
 
@@ -56,14 +65,17 @@
 import { groupTransactions, getGroups, getGroupUsers } from '@/modules/database/groups';
 import { useUserStore } from '@/stores/user';
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
 import SplitIcons from './SplitIcons.vue'
-import CardList from './CardList.vue';
+import Info from '@/components/splits/Info.vue';
+import SplitCardList from './SplitCardList.vue';
 import { watch } from 'vue';
-const user = useUserStore();
+import { useRouter } from 'vue-router';
 const router = useRouter();
+const user = useUserStore();
 const transactions = ref([]);
 const loading = ref(true);
+const infoDialog = ref(false);
+const selectedSplit = ref(null);
 const headers = ref([
     { title: 'Id', key: 'id', removable: false, align: 'start' },
     { title: 'Comment', key: 'title', removable: false, align: 'start' },
@@ -142,6 +154,10 @@ watch(searchText, (v, o) => {
 onMounted(() => {
     getAll();
 })
+const showInfo = (split) => {
+    selectedSplit.value = split;
+    infoDialog.value = true
+}
 </script>
 
 <style scoped>

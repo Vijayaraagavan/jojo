@@ -7,7 +7,8 @@ import {
   query,
   updateDoc,
   where,
-  documentId
+  documentId,
+  orderBy
 } from 'firebase/firestore'
 import { addUserToGroup, getUser } from './users'
 import { dToStr, dateTimeToStr } from '../dateTime'
@@ -133,6 +134,18 @@ export const addSplit = (data) => {
       .catch(() => f('Split creation failed'))
   })
 }
+export const modifySplit = (id, data) => {
+  const clRef = collection(db, 'group_transactions')
+  const docRef = doc(db, 'group_transactions', id)
+  return new Promise((s, f) => {
+    updateDoc(docRef, data)
+      .then(() => s())
+      .catch((err) => {
+        console.log(err)
+        f('Split creation failed')
+      })
+  })
+}
 
 export const groupTransactions = (uid) => {
   return new Promise((s, f) => {
@@ -145,7 +158,7 @@ export const groupTransactions = (uid) => {
     const groups = []
     let count = 1
     getUser(uid).then((user) => {
-      const q = query(clRef, where('groupId', 'in', user.groups))
+      const q = query(clRef, where('groupId', 'in', user.groups), orderBy('dateTime', 'desc'))
       getDocs(q)
         .then((snap) => {
           snap.docs.forEach((d) => {
@@ -180,6 +193,8 @@ const formatExpense = (d, id, count) => {
     title: d.title,
     userId: d.userId,
     group: d.group,
-    groupId: d.groupId
+    groupId: d.groupId,
+    uid: id,
+    dateTimeInSec: d.dateTime
   }
 }

@@ -79,7 +79,7 @@ import { showSnack } from '@/composables/snackbar';
 import { addExpense } from '@/modules/database/main'
 import { tToStr } from '@/modules/dateTime';
 import { watch } from 'vue';
-const props = defineProps(['reactive', 'totalAmount']);
+const props = defineProps(['reactive', 'totalAmount', 'oldTitle', 'oldDate']);
 const emit = defineEmits(['splitInput'])
 const datePicker = ref(false);
 const timePicker = ref(false);
@@ -112,7 +112,13 @@ const initTime = () => {
     // time.value = r;
     time.value = tToStr(Date.now());
 }
-onMounted(initTime);
+onMounted(() => {
+    initTime();
+    if (props.oldDate) {
+        date.value = props.oldDate;
+        expenseTitle.value = props.oldTitle;
+    }
+});
 
 const dateTime = computed(() => {
     const monthStr = date.value.toLocaleString('en-US', { month: 'short' });
@@ -176,5 +182,5 @@ const emitter = () => {
 emitter();
 watch(() => props.totalAmount, (v) => {
     amount.value = Number(v);
-})
+}, { immediate: true })
 </script>
