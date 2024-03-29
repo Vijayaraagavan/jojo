@@ -57,7 +57,7 @@ onMounted(fetchDocs)
                 </div>
             </template>
         </v-navigation-drawer>
-        <v-main class="ma-2 mr-6" style="width: 85%;">
+        <v-main class="ma-2" :style="{ width: $vuetify.display.mdAndUp ? '85%' : '100%' }">
             <router-view></router-view>
         </v-main>
     </v-container>

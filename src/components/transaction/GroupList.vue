@@ -40,7 +40,7 @@
                 </tr>
             </template>
             <template v-slot:headers="{ columns, isSorted, getSortIcon, toggleSort }">
-                <tr>
+                <tr style="background-color: gray; font-weight: bold; color: white;">
                     <template v-for="column in columns" :key="column.key">
                         <td>
                             <span class="mr-2 cursor-pointer" @click="() => toggleSort(column)">{{ column.title
