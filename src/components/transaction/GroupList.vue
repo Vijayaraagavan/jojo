@@ -34,6 +34,7 @@
                     <td>{{ item.id }}</td>
                     <td>{{ item.title }}</td>
                     <SplitIcons :members="item.group" />
+                    <td>{{ item.category }}</td>
                     <td>{{ item.amount }}</td>
                     <td>{{ item.dateTime }}</td>
                 </tr>
@@ -68,10 +69,13 @@ import { onMounted, ref } from 'vue';
 import SplitIcons from './SplitIcons.vue'
 import Info from '@/components/splits/Info.vue';
 import SplitCardList from './SplitCardList.vue';
+import { useSettingsStore } from '@/stores/settings';
+
 import { watch } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 const user = useUserStore();
+const settingsStore = useSettingsStore();
 const transactions = ref([]);
 const loading = ref(true);
 const infoDialog = ref(false);
@@ -80,6 +84,7 @@ const headers = ref([
     { title: 'Id', key: 'id', removable: false, align: 'start' },
     { title: 'Comment', key: 'title', removable: false, align: 'start' },
     { title: 'Splits', key: 'splits', removable: false, align: 'start' },
+    { title: 'Category', key: 'category', removable: false, align: 'start' },
     { title: 'Amount', key: 'amountStr', removable: false, align: 'start' },
     { title: 'DateTime', key: 'dateTime', removable: false, align: 'start' }
 ]);
@@ -136,6 +141,11 @@ const saveUsers = (users) => {
             group.push(m);
         });
         t.group = group;
+        const c = settingsStore.categories.find(i => i.uid == t.categoryId);
+        t.category = 'General'
+        if (c) {
+            t.category = c.name;
+        }
         g.push(t)
     })
     transactions.value = g;

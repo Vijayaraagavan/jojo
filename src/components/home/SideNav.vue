@@ -28,6 +28,11 @@ const index = [
         id: 'teams',
         title: 'Groups',
         routeName: 'teams'
+    },
+    {
+        id: 'settings',
+        title: 'Settings',
+        routeName: 'settings'
     }
 ]
 const routeTo = (i) => {

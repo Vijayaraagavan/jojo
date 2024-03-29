@@ -6,7 +6,14 @@
                     <v-col cols="12">
                         <label for="expense_name">Expense Type</label>
                         <v-text-field name="expense_name" id="expense_name" class="mt-2" v-model="expenseTitle"
-                            @change="emitter()" placeholder="purpose of expense"></v-text-field>
+                            @change="emitter()" placeholder="purpose of expense">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                        <label for="expense_name">Category</label>
+                        <v-autocomplete :items="settingsStore.categories" item-title="name" item-value="uid"
+                            v-model="categoryId" prepend-inner-icon="mdi-domain" class="mt-2"
+                            @update:model-value="emitter()"></v-autocomplete>
                     </v-col>
                     <v-col cols="12">
                         <label for="numpad">Amount</label>
@@ -79,7 +86,8 @@ import { showSnack } from '@/composables/snackbar';
 import { addExpense } from '@/modules/database/main'
 import { tToStr } from '@/modules/dateTime';
 import { watch } from 'vue';
-const props = defineProps(['reactive', 'totalAmount', 'oldTitle', 'oldDate']);
+import { useSettingsStore } from '@/stores/settings';
+const props = defineProps(['reactive', 'totalAmount', 'oldTitle', 'oldDate', 'oldCategory']);
 const emit = defineEmits(['splitInput'])
 const datePicker = ref(false);
 const timePicker = ref(false);
@@ -88,6 +96,8 @@ const time = ref('7:28 PM')
 const numpad = ref(false);
 const amount = ref(0);
 const expenseTitle = ref('');
+const settingsStore = useSettingsStore();
+const categoryId = ref(settingsStore.categories && settingsStore.categories[0].uid);
 const showTimer = () => {
     datePicker.value = false;
     timePicker.value = true;
@@ -117,6 +127,7 @@ onMounted(() => {
     if (props.oldDate) {
         date.value = props.oldDate;
         expenseTitle.value = props.oldTitle;
+        categoryId.value = props.oldCategory;
     }
 });
 
@@ -154,9 +165,9 @@ const create = () => {
         amount: amount.value,
         amountStr: numStr.value,
         dateTime: finalTime.value,
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        categoryId: categoryId.value
     }
-    console.log(payload);
     addExpense(payload)
         .then(msg => {
             showSnack(msg);
@@ -175,12 +186,15 @@ const emitter = () => {
         title: expenseTitle.value,
         amount: amount.value,
         date: finalTime.value,
-        amountStr: numStr.value
+        amountStr: numStr.value,
+        categoryId: categoryId.value
     }
     emit('splitInput', data);
 }
 emitter();
 watch(() => props.totalAmount, (v) => {
-    amount.value = Number(v);
+    if (v) {
+        amount.value = Number(v);
+    }
 }, { immediate: true })
 </script>

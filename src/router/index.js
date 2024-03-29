@@ -60,6 +60,11 @@ const router = createRouter({
           path: 'split/transaction/:tId',
           name: 'splitUpdate',
           component: () => import('@/components/splits/Update.vue')
+        },
+        {
+          path: 'settings',
+          name: 'settings',
+          component: () => import('@/components/settings/Home.vue')
         }
       ]
     },

@@ -195,6 +195,7 @@ const formatExpense = (d, id, count) => {
     group: d.group,
     groupId: d.groupId,
     uid: id,
-    dateTimeInSec: d.dateTime
+    dateTimeInSec: d.dateTime,
+    categoryId: d.categoryId
   }
 }

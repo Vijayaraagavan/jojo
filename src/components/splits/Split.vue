@@ -3,7 +3,7 @@
         <v-col>
             <v-card flat max-width="400" color="transparent">
                 <Create reactive="true" @split-input="getSplitInput" :total-amount="totalAmount" :old-title="oldTitle"
-                    :old-date="oldDate" v-if="createLoader" />
+                    :old-date="oldDate" :old-category="oldCategory" v-if="createLoader" />
                 <v-btn v-if="props.updateSplit" color="success" block class="mt-2" @click="createSplit()">Update</v-btn>
                 <v-btn v-else color="success" block class="mt-2" @click="createSplit()">Add</v-btn>
             </v-card>
@@ -177,6 +177,7 @@ const totalAmount = ref(0);
 const valid = ref(false);
 const oldTitle = ref('');
 const oldDate = ref(null);
+const oldCategory = ref(null);
 const createLoader = ref(false);
 
 const childData = {
@@ -190,6 +191,7 @@ const getSplitInput = (v) => {
     totalAmount.value = v.amount;
     childData.title = v.title;
     childData.date = v.date;
+    childData.categoryId = v.categoryId;
     calculateBox();
 }
 const close = () => {
@@ -268,6 +270,7 @@ onMounted(() => {
                         totalAmount.value = props.updateSplit.amount;
                         oldTitle.value = props.updateSplit.title;
                         oldDate.value = new Date(props.updateSplit.dateTimeInSec);
+                        oldCategory.value = props.updateSplit.categoryId;
                     } else {
                         payer.value = users.value[0].uid;
                         if (currentUser) {
@@ -322,7 +325,8 @@ const createSplit = () => {
         dateTime: childData.date,
         createdAt: Date.now(),
         group: groups,
-        groupId: group.value.id
+        groupId: group.value.id,
+        categoryId: childData.categoryId
     }
     if (props.updateSplit) {
         modifySplit(props.updateSplit.uid, payload)

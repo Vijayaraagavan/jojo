@@ -5,14 +5,21 @@ import { snackbar, snackMessage, snackColor, reset } from '@/composables/snackba
 import { authorized } from '@/modules/auth/auth.js';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
+import { ref } from 'vue';
+import { start } from '@/stores/init';
+const loaded = ref(false)
 const router = useRouter();
 authorized()
   .then((s) => {
     const user = useUserStore();
     user.setId(s.uid);
+    start()
+      .then(() => loaded.value = true)
   })
   .catch((f) => {
-    console.log("no saved", f)
+    console.log("no saved", f);
+    loaded.value = true;
+    router.push({ name: 'login' })
   })
 </script>
 
@@ -40,7 +47,7 @@ authorized()
       </template>
     </v-snackbar>
 
-    <RouterView />
+    <RouterView v-if="loaded" />
   </v-layout>
 
 </template>
