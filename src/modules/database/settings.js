@@ -59,3 +59,19 @@ export const newSettings = (data) => {
       })
   })
 }
+
+export const getCategories = (id) => {
+  return new Promise((s) => {
+    getSettings(id)
+      .then((setting) => {
+        if (setting.categories.length > 0) {
+          s(setting.categories)
+        } else {
+          s([{ name: 'General', active: true, id: 0 }])
+        }
+      })
+      .catch((msg) => {
+        console.log(msg)
+      })
+  })
+}

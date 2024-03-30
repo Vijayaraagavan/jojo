@@ -6,8 +6,8 @@
                     prepend-inner-icon="mdi-magnify"></v-text-field>
                 <v-btn icon flat @click="dialog = true"><v-icon color="success">mdi-plus</v-icon></v-btn>
             </div>
-            <v-data-table :headers="headers" :items="setting.categories" hide-actions class="elevation-1"
-                :loading="loading" items-per-page="5" :page="page">
+            <v-data-table :headers="headers" :items="setting.categories" hide-actions :loading="loading"
+                items-per-page="5" :page="page">
                 <template #item.active="{ item }">
                     <v-btn icon flat @click="toggleActive(item)">
                         <v-icon color="error" v-if="item.active">mdi-close</v-icon>
@@ -36,7 +36,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { getSettings, saveSettings } from '@/modules/database/settings'
+import { getSettings, saveSettings, newSettings } from '@/modules/database/settings'
 import { onMounted } from 'vue';
 import { showSnack } from '@/composables/snackbar';
 import { useUserStore } from '@/stores/user';
@@ -44,6 +44,7 @@ import { useSettingsStore } from '@/stores/settings';
 const store = useUserStore();
 const { setCategories } = useSettingsStore();
 const dialog = ref(false);
+const props = defineProps(['uid']);
 const headers = [
     { title: 'Category', key: 'name', align: 'start' },
     { title: 'Active', key: 'active', align: 'end' },
@@ -58,13 +59,28 @@ const rules = [
     (v) => !!v || 'category name cannot be empty'
 ]
 const get = () => {
-    getSettings(store.id)
+    getSettings(props.uid)
         .then((s) => {
             loading.value = false;
             if (!setting.value.categories) {
                 setting.value.categories = [];
             }
             setting.value = s;
+        })
+        .catch((msg) => {
+            if (msg.includes('no settings')) {
+                if (props.uid) {
+                    const payload = {
+                        uid: props.uid,
+                        pkey: 1,
+                        categories: []
+                    }
+
+                    newSettings(payload).then(() => {
+                        // settingsStore.saveSettings(payload)
+                    })
+                }
+            }
         })
 }
 const update = () => {

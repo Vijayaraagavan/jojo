@@ -21,7 +21,7 @@ const fetchDocs = () => {
 }
 const showNav = ref(false);
 const mobileWid = {
-    width: vuetify.display.xs ? 100 + 'vw' : 90 + 'vw',
+    width: vuetify.display.xs ? 100 + 'vw' : 100 + 'vw',
     padding: '0px'
 }
 onMounted(fetchDocs)

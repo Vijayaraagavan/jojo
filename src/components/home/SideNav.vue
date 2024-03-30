@@ -44,14 +44,14 @@ const routeTo = (i) => {
 <template>
     <v-list>
         <template v-for="i in index">
-            <v-list-item v-if="!i.children" :key="i.id" :title="i.title" color="transparent" class="text-start"
+            <v-list-item v-if="!i.children" :key="i.id" :title="i.title" color="transparent" class="text-start pl-7"
                 @click="routeTo(i)">
             </v-list-item>
-            <v-list-group v-if="i.children" :value="i.title" class="text-start">
+            <v-list-group v-if="i.children" :value="i.title" class="text-start px-3">
                 <template v-slot:activator="{ props }">
                     <v-list-item v-bind="props" :title="i.title"></v-list-item>
                 </template>
-                <v-list-item v-for="c in i.children" :title="c.title" color="transparent" class="text-start pl-3"
+                <v-list-item v-for="c in i.children" :title="c.title" color="transparent" class="text-start px-3"
                     @click="routeTo(c)">
                 </v-list-item>
             </v-list-group>

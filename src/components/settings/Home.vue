@@ -5,7 +5,7 @@
         </v-col>
         <v-col xs="12" sm="12" md="6" lg="4">
             <h3 class="text-white mb-2">Category Settings</h3>
-            <Categories />
+            <Categories v-if="store.id" :uid="store.id" />
         </v-col>
     </v-row>
 </template>
@@ -16,5 +16,4 @@ import Categories from './Categories.vue';
 import { useUserStore } from '@/stores/user';
 const store = useUserStore();
 const setting = ref(null);
-get();
 </script>

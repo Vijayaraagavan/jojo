@@ -11,8 +11,8 @@
                     </v-col>
                     <v-col cols="12">
                         <label for="expense_name">Category</label>
-                        <v-autocomplete :items="settingsStore.categories" item-title="name" item-value="uid"
-                            v-model="categoryId" prepend-inner-icon="mdi-domain" class="mt-2"
+                        <v-autocomplete :items="categories" item-title="name" item-value="uid" v-model="categoryId"
+                            prepend-inner-icon="mdi-domain" class="mt-2"
                             @update:model-value="emitter()"></v-autocomplete>
                     </v-col>
                     <v-col cols="12">
@@ -86,8 +86,11 @@ import { showSnack } from '@/composables/snackbar';
 import { addExpense } from '@/modules/database/main'
 import { tToStr } from '@/modules/dateTime';
 import { watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useSettingsStore } from '@/stores/settings';
+import { getCategories } from '@/modules/database/settings';
 const props = defineProps(['reactive', 'totalAmount', 'oldTitle', 'oldDate', 'oldCategory']);
+const { params } = useRoute();
 const emit = defineEmits(['splitInput'])
 const datePicker = ref(false);
 const timePicker = ref(false);
@@ -96,8 +99,10 @@ const time = ref('7:28 PM')
 const numpad = ref(false);
 const amount = ref(0);
 const expenseTitle = ref('');
+const user = useUserStore();
 const settingsStore = useSettingsStore();
-const categoryId = ref(settingsStore.categories && settingsStore.categories[0].uid);
+const categories = ref([]);
+const categoryId = ref(categories.value && categories.value[0] && categories.value[0].uid);
 const showTimer = () => {
     datePicker.value = false;
     timePicker.value = true;
@@ -123,6 +128,15 @@ const initTime = () => {
     time.value = tToStr(Date.now());
 }
 onMounted(() => {
+    const uid = user.id;
+    if (params.groupId) {
+        uid = params.groupId;
+    }
+    getCategories(uid)
+        .then((v) => {
+            categories.value = v
+            categoryId.value = categories.value[0].uid
+        })
     initTime();
     if (props.oldDate) {
         date.value = props.oldDate;
@@ -157,7 +171,6 @@ const finalTime = computed(() => {
     return date.value.getTime();
 })
 const create = () => {
-    const user = useUserStore();
 
     let payload = {
         userId: user.id,
