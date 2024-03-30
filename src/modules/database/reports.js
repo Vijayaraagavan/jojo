@@ -22,7 +22,10 @@ export const getGroupTransactions = async (id, filter) => {
       const categories = await getCategories(id, 'all')
       const spentResp = spentWise(resp)
       const userIds = Object.keys(spentResp)
-      const fullUsers = await getGroupUsers(userIds)
+      let fullUsers = []
+      if (userIds.length) {
+        fullUsers = await getGroupUsers(userIds)
+      }
       s({
         transactionWise: transactionWise(resp),
         categoryWise: categoryWise(resp, categories),

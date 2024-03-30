@@ -33,7 +33,7 @@
                 <tr @click="showInfo(item)" style="cursor: pointer;">
                     <td>{{ item.id }}</td>
                     <td>{{ item.title }}</td>
-                    <SplitIcons :members="item.group" />
+                    <SplitIcons :members="item.group" class="pt-2" />
                     <td>{{ item.category }}</td>
                     <td>{{ item.amount }}</td>
                     <td>{{ item.dateTime }}</td>
@@ -114,9 +114,19 @@ const getAll = () => {
     }).then((v) => {
         // console.log(v)
         transactions.value = v.resp;
-        getReportUsers(v.groups)
+        if (v.groups.length) {
+            getReportUsers(v.groups)
+        } else {
+            loading.value = false;
+        }
         // loading.value = false;
     })
+        .catch(msg => {
+            if (msg.includes('no group')) {
+                loading.value = false;
+                router.push({ name: 'teams' })
+            }
+        })
 }
 const getReportUsers = (groupIds) => {
     getGroups(groupIds)

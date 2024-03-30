@@ -1,10 +1,17 @@
 <template>
     <v-dialog v-model="dialog" scrollable :overlay="false" max-width="400px" transition="dialog-transition">
         <v-card flat>
-            <v-toolbar color="indigo darken-4" class="pl-4">
-                <h3 class="text-capitalize">{{ props.split.title }}</h3>
-                <v-spacer></v-spacer>
-                <v-btn icon flat @click="dialog = false"><v-icon color="error">mdi-close</v-icon></v-btn>
+            <v-toolbar color="indigo darken-4" class="pr-2 pa-2" density="compact" elevation-2>
+                <v-row>
+                    <v-col cols="10">
+                        <v-toolbar-title class="text-capitalize pt-2 pl-2">
+                            {{ props.split.title }}
+                        </v-toolbar-title>
+                    </v-col>
+                    <v-col cols="2">
+                        <v-btn icon flat @click="dialog = false"><v-icon>mdi-close</v-icon></v-btn>
+                    </v-col>
+                </v-row>
             </v-toolbar>
             <v-card-text>
                 <v-row class="mb-4 mt-2">
@@ -60,7 +67,7 @@
                                                     <h3 class="font-weight-bold success--text text-success"
                                                         color="success">
                                                         {{
-                                                        u.amount }}</h3>
+        u.amount }}</h3>
                                                 </v-col>
                                             </v-row>
                                         </v-card-text>

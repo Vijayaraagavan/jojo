@@ -31,15 +31,21 @@ export const addUserToGroup = (uid, groupId) => {
   const clRef = collection(db, 'users')
   const q = query(clRef, where('uid', '==', uid))
   return new Promise((s, f) => {
-    getDocs(q).then((snap) => {
-      if (snap.docs.length == 1) {
-        const d = snap.docs[0]
-        const user = addGroupId(d.data(), groupId)
-        updateDoc(d.ref, user)
-      } else {
-        f('user not found')
-      }
-    })
+    getDocs(q)
+      .then((snap) => {
+        if (snap.docs.length == 1) {
+          const d = snap.docs[0]
+          const user = addGroupId(d.data(), groupId)
+          updateDoc(d.ref, user)
+          s()
+        } else {
+          f('user not found')
+        }
+      })
+      .catch((msg) => {
+        console.log(msg)
+        f(msg)
+      })
   })
 }
 

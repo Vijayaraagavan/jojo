@@ -1,7 +1,8 @@
 <template>
     <div class="d-flex justify-end mb-2">
-        <v-btn color="success" @click="openJoin()" class="mr-2"><v-icon>mdi-plus</v-icon>join</v-btn>
-        <v-btn color="success" @click="open()"><v-icon>mdi-plus</v-icon>group</v-btn>
+        <v-btn v-if="!props.first" color="success" @click="openJoin()"
+            class="mr-2"><v-icon>mdi-plus</v-icon>join</v-btn>
+        <v-btn v-if="!props.first" color="success" @click="open()"><v-icon>mdi-plus</v-icon>group</v-btn>
         <v-dialog v-model="dialog" scrollable persistent :overlay="false" max-width="500px"
             transition="dialog-transition">
             <v-card>
@@ -49,6 +50,33 @@
             </v-card>
         </v-dialog>
     </div>
+    <div class="d-flex justify-center align-center">
+        <v-card v-if="props.first" width="350" class="elevation-10">
+            <v-card-text class="py-6">
+                <v-row class=" text-center justify-center">
+                    <v-col cols="12">
+                        <h3>You are not in any group!</h3>
+                    </v-col>
+                    <v-col cols="6" class="d-flex justify-center">
+                        <v-btn color="success" variant="text" class="elevation-3 d-flex flex-column"
+                            style="border: 1px solid; flex-direction: column; display: flex;" height="55"
+                            @click="open()">
+                            <span>new</span>
+                            <v-icon>mdi-plus</v-icon>
+                        </v-btn>
+                    </v-col>
+                    <v-col cols="6" class="d-flex justify-center">
+                        <v-btn color="success" variant="text" class="elevation-3 d-flex flex-column"
+                            style="border: 1px solid; flex-direction: column; display: flex;" height="55"
+                            @click="openJoin()">
+                            <span>Join</span>
+                            <v-icon>mdi-plus</v-icon>
+                        </v-btn>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+        </v-card>
+    </div>
 </template>
 
 <script setup>
@@ -62,6 +90,7 @@ const joinDialog = ref(false);
 const groupName = ref('');
 const joinRefId = ref('')
 const valid = ref(false);
+const props = defineProps(['first']);
 const nameRules = [
     (v) => v && !!v || 'Group name should not be empty',
     (v) => v && v.length >= 3 || 'Name must be atleast 3 letters'
@@ -85,7 +114,10 @@ const create = () => {
         members: [userStore.id]
     }
     newGroup(data)
-        .then((msg) => showSnack(msg))
+        .then((msg) => {
+            showSnack(msg)
+            location.reload();
+        })
         .catch((msg) => showSnack(msg, 'error'));
     dialog.value = false;
 }
@@ -97,6 +129,7 @@ const joinGroup = () => {
         .then(() => {
             showSnack('Joined new group')
             joinDialog.value = false;
+            location.reload();
         })
         .catch((msg) => showSnack(msg, 'error'));
 

@@ -5,7 +5,11 @@
                 <v-col class="d-flex justify-start align-center" cols="12">
                     <h4 class="pt-1">Ref ID</h4>
                     <h3 class="font-weight-medium ml-1">{{ group.joinId }}</h3>
-                    <v-icon size="small" class="pt-1 ml-1" @click="copy()">mdi-note-outline</v-icon>
+                    <v-btn icon flat v-if="!copied" @click="copy()">
+                        <v-icon size="small" class="pt-1 ml-1">mdi-note-outline</v-icon>
+                        <v-tooltip activator="parent" location="end">Copy</v-tooltip>
+                    </v-btn>
+                    <v-icon color="success" class="ml-4" v-if="copied">mdi-check</v-icon>
                     <v-spacer></v-spacer>
                     <v-btn color="success" icon @click="newSplit()"><v-icon>mdi-plus</v-icon></v-btn>
                 </v-col>
@@ -20,12 +24,16 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import Categories from '../settings/Categories.vue';
+import { ref } from 'vue';
 const router = useRouter();
 const group = defineModel('group');
+const copied = ref(false);
 const copy = () => {
+    copied.value = true;
     if (navigator.clipboard) {
         navigator.clipboard.writeText(group.value.joinId);
     }
+    setTimeout(() => copied.value = false, 2000)
 }
 const newSplit = () => {
     router.push({ name: 'split', params: { groupId: group.value.docId } });

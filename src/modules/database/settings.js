@@ -56,6 +56,7 @@ export const newSettings = (data) => {
       })
       .catch((err) => {
         console.log(err)
+        f()
       })
   })
 }
@@ -78,6 +79,32 @@ export const getCategories = (id, mode) => {
       })
       .catch((msg) => {
         console.log(msg)
+        s([{ name: 'General', active: true, uid: -1 }])
       })
   })
+}
+
+export const verifySettings = (id) => {
+  getSettings(id).catch((msg) => {
+    if (msg.includes('no settings')) {
+      newSettings(getInitSettings(id))
+    }
+  })
+}
+
+export const getInitSettings = (id) => {
+  return {
+    uid: id,
+    pkey: 10,
+    categories: [
+      { name: 'Food', uid: 1, active: true },
+      { name: 'Drinks', uid: 2, active: true },
+      { name: 'Transportation', uid: 3, active: true },
+      { name: 'Tickets', uid: 4, active: true },
+      { name: 'Groceries', uid: 5, active: true },
+      { name: 'Rent & Utilities', uid: 6, active: true },
+      { name: 'Accomodation', uid: 7, active: true },
+      { name: 'General', uid: -1, active: true }
+    ]
+  }
 }

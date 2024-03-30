@@ -82,6 +82,7 @@ import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import { loader as loaderBtn } from '@/composables/loader';
 import { insert as insertUser } from '@/modules/database/users.js';
+import { verifySettings } from '@/modules/database/settings';
 const loader = ref(false);
 const logins = ref(null);
 const btnVisibility = ref(true);
@@ -125,6 +126,7 @@ const proceedLogin = (user) => {
     }
     insertUser(user);
     loaderBtn.stop();
+    verifySettings(user.uid)
     router.push({ name: "dashboard" })
 }
 const showLoader = () => {

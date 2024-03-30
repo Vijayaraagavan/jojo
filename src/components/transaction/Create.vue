@@ -89,6 +89,8 @@ import { watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useSettingsStore } from '@/stores/settings';
 import { getCategories } from '@/modules/database/settings';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const props = defineProps(['reactive', 'totalAmount', 'oldTitle', 'oldDate', 'oldCategory']);
 const { params } = useRoute();
 const emit = defineEmits(['splitInput'])
@@ -135,13 +137,18 @@ onMounted(() => {
     getCategories(uid)
         .then((v) => {
             categories.value = v.filter(i => i.active == true);
-            categoryId.value = categories.value[0].uid
+            categoryId.value = categories.value[0].uid;
+            emitter();
+
         })
     initTime();
     if (props.oldDate) {
         date.value = props.oldDate;
         expenseTitle.value = props.oldTitle;
         categoryId.value = props.oldCategory;
+    }
+    if (!props.oldDate) {
+        emitter();
     }
 });
 
@@ -185,6 +192,7 @@ const create = () => {
         .then(msg => {
             showSnack(msg);
             resetForm();
+            router.push({ name: 'transactions' })
         })
         .catch(msg => showSnack(msg, 'error'))
 }

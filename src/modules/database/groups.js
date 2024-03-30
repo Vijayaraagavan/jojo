@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore'
 import { addUserToGroup, getUser } from './users'
 import { dToStr, dateTimeToStr, dateTimeToDate } from '../dateTime'
+import { getInitSettings, newSettings } from './settings'
 import { db } from '../firebase'
 
 export const newGroup = (group) => {
@@ -26,7 +27,8 @@ export const newGroup = (group) => {
     addDoc(clRef, group)
       .then((resp) => {
         addUserToGroup(group.members[0], resp.id)
-        s('Group created successfully')
+          .then(() => newSettings(getInitSettings(resp.id)))
+          .then(() => s('Group created successfully'))
       })
       .catch(() => f('failed to create group'))
     //   }
@@ -70,10 +72,13 @@ export const joinGroupByRef = (userId, refId, name) => {
         if (!oGroup.members.includes(userId)) {
           oGroup.members.push(userId)
         }
-        updateDoc(snap.docs[0].ref, oGroup).then(() => {
-          addUserToGroup(userId, snap.docs[0].id)
-        })
-        s(oGroup)
+        updateDoc(snap.docs[0].ref, oGroup)
+          .then(() => {
+            addUserToGroup(userId, snap.docs[0].id).then(() => s(oGroup))
+          })
+          .catch((msg) => {
+            console.log(msg)
+          })
       })
       .catch((err) => console.log(err))
   })
@@ -158,8 +163,12 @@ export const groupTransactions = (uid, filters = { search: '' }) => {
     const groups = []
     let count = 1
     getUser(uid).then((user) => {
+      if (user.groups.length == 0) {
+        f('no group')
+        return
+      }
       let q = query(clRef, where('groupId', 'in', user.groups), orderBy('dateTime', 'desc'))
-      if (filters.search != '' && !!filters.search && filter.id == 'title') {
+      if (filters.search != '' && !!filters.search && filters.id == 'title') {
         let end = filters.search + '\uf8ff'
         q = query(q, where(filter.id, '>=', filters.search), where(filter.id, '<=', end))
       }

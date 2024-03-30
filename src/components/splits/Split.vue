@@ -185,9 +185,6 @@ const childData = {
     date: null
 }
 const getSplitInput = (v) => {
-    if (!v.amount) {
-        return;
-    }
     totalAmount.value = v.amount;
     childData.title = v.title;
     childData.date = v.date;
