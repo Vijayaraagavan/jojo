@@ -11,7 +11,7 @@ import {
   orderBy
 } from 'firebase/firestore'
 import { addUserToGroup, getUser } from './users'
-import { dToStr, dateTimeToStr } from '../dateTime'
+import { dToStr, dateTimeToStr, dateTimeToDate } from '../dateTime'
 import { db } from '../firebase'
 
 export const newGroup = (group) => {
@@ -147,7 +147,7 @@ export const modifySplit = (id, data) => {
   })
 }
 
-export const groupTransactions = (uid) => {
+export const groupTransactions = (uid, filters = { search: '' }) => {
   return new Promise((s, f) => {
     if (!uid) {
       f('no proper id')
@@ -158,7 +158,17 @@ export const groupTransactions = (uid) => {
     const groups = []
     let count = 1
     getUser(uid).then((user) => {
-      const q = query(clRef, where('groupId', 'in', user.groups), orderBy('dateTime', 'desc'))
+      let q = query(clRef, where('groupId', 'in', user.groups), orderBy('dateTime', 'desc'))
+      if (filters.search != '' && !!filters.search && filter.id == 'title') {
+        let end = filters.search + '\uf8ff'
+        q = query(q, where(filter.id, '>=', filters.search), where(filter.id, '<=', end))
+      }
+      // if (options.filter.id == 'amount') {
+      //   q = query(q, where(options.filter.id, '==', Number(search)))
+      // }
+      if (filters.dateFrom) {
+        q = query(q, where('dateTime', '>=', filters.dateFrom))
+      }
       getDocs(q)
         .then((snap) => {
           snap.docs.forEach((d) => {
@@ -184,10 +194,38 @@ export const groupTransactions = (uid) => {
   })
 }
 
-const formatExpense = (d, id, count) => {
+export const singleGroupTransaction = (groupId, filters) => {
+  const clRef = collection(db, 'group_transactions')
+
+  let q = query(clRef, where('groupId', '==', groupId), orderBy('dateTime', 'desc'))
+  if (filters.search != '' && !!filters.search && filter.id == 'title') {
+    let end = filters.search + '\uf8ff'
+    q = query(q, where(filter.id, '>=', filters.search), where(filter.id, '<=', end))
+  }
+  if (filters.dateFrom) {
+    q = query(q, where('dateTime', '>=', filters.dateFrom))
+  }
+  const resp = []
+  return new Promise((s, f) => {
+    getDocs(q)
+      .then((snap) => {
+        snap.docs.forEach((d) => {
+          const data = d.data()
+          resp.push(formatExpense(data, d.id))
+        })
+        s(resp)
+      })
+      .catch((err) => {
+        console.log(err)
+        f('Error while fetching')
+      })
+  })
+}
+const formatExpense = (d, id, count = -1) => {
   return {
     id: count,
     dateTime: dateTimeToStr(d.dateTime),
+    date: dateTimeToDate(d.dateTime),
     amount: d.amount,
     amountStr: d.amountStr,
     title: d.title,

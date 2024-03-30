@@ -60,14 +60,20 @@ export const newSettings = (data) => {
   })
 }
 
-export const getCategories = (id) => {
+export const getCategories = (id, mode) => {
   return new Promise((s) => {
     getSettings(id)
       .then((setting) => {
-        if (setting.categories.length > 0) {
+        let total = []
+        if (mode == 'all') {
+          total = setting.categories
+        } else {
+          total = setting.categories.filter((i) => i.active == true)
+        }
+        if (total.length > 0) {
           s(setting.categories)
         } else {
-          s([{ name: 'General', active: true, id: 0 }])
+          s([{ name: 'General', active: true, uid: -1 }])
         }
       })
       .catch((msg) => {

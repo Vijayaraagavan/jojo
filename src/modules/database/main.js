@@ -1,6 +1,6 @@
 import { db } from '@/modules/firebase'
 import { addDoc, collection, getDocs, orderBy, query, where } from 'firebase/firestore'
-import { dToStr, dateTimeToStr } from '../dateTime'
+import { dToStr, dateTimeToStr, dateTimeToDate } from '../dateTime'
 
 const all = () => {
   const items = []
@@ -61,6 +61,9 @@ const getExpenses = (id, { search, filter }) => {
     if (filter.id == 'amount') {
       q = query(q, where(filter.id, '==', Number(search)))
     }
+    if (filter.dateFrom) {
+      q = query(q, where('dateTime', '>=', filter.dateFrom))
+    }
     getDocs(q)
       .then((snapshot) => {
         snapshot.docs.forEach((item) => {
@@ -80,6 +83,7 @@ const formatExpense = (data, count) => {
   return {
     id: count,
     dateTime: dateTimeToStr(data.dateTime),
+    date: dateTimeToDate(data.dateTime),
     amount: data.amount,
     amountStr: data.amountStr,
     title: data.title,

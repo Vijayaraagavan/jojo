@@ -9,6 +9,11 @@ import { ref } from 'vue';
 const nav = defineModel('nav');
 const index = [
     {
+        id: 'dashboard',
+        title: 'Dashboard',
+        routeName: 'dashboard'
+    },
+    {
         id: 'transactions',
         title: 'Reports',
         children: [

@@ -41,6 +41,7 @@ import { onMounted } from 'vue';
 import { showSnack } from '@/composables/snackbar';
 import { useUserStore } from '@/stores/user';
 import { useSettingsStore } from '@/stores/settings';
+import { watch } from 'vue';
 const store = useUserStore();
 const { setCategories } = useSettingsStore();
 const dialog = ref(false);
@@ -103,4 +104,5 @@ const toggleActive = (i) => {
 onMounted(() => {
     get();
 })
+watch(() => props.uid, get)
 </script>
