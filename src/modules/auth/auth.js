@@ -54,7 +54,7 @@ const signInWithEmail = (email, password) => {
   })
 }
 
-const signInWithProvider = (id, cb) => {
+const signInWithProvider = (id, cb, errorCb) => {
   const provider = getProvider(id)
   signInWithPopup(auth, provider)
     .then((result) => {
@@ -74,9 +74,9 @@ const signInWithProvider = (id, cb) => {
       const errorMessage = error.message
       // The email of the user's account used.
       // The AuthCredential type that was used.
+      errorCb()
       const credential = GoogleAuthProvider.credentialFromError(error)
       console.log('google error', error)
-
       // ...
     })
 }

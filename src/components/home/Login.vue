@@ -80,6 +80,7 @@ import { ref } from 'vue';
 import { showSnack } from '@/composables/snackbar';
 import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
+import { loader as loaderBtn } from '@/composables/loader';
 import { insert as insertUser } from '@/modules/database/users.js';
 const loader = ref(false);
 const logins = ref(null);
@@ -92,6 +93,7 @@ const router = useRouter();
 
 const login = () => {
     startLoader();
+    showLoader()
     console.log(email.value, password.value)
     signInWithEmail(email.value, password.value)
         .then((user) => {
@@ -100,7 +102,7 @@ const login = () => {
         .catch(() => {
             console.log("lalunche")
             showSnack("Authentication failed", "error");
-
+            loaderBtn.stop();
         })
         .finally(() => {
             btnVisibility.value = true;
@@ -108,9 +110,10 @@ const login = () => {
         })
 }
 const providerLogin = (id) => {
+    showLoader()
     signInWithProvider(id, (user) => {
         proceedLogin(user)
-    })
+    }, () => loaderBtn.stop())
 }
 const proceedLogin = (user) => {
     showSnack("Login successfull");
@@ -121,7 +124,11 @@ const proceedLogin = (user) => {
         saveSession();
     }
     insertUser(user);
+    loaderBtn.stop();
     router.push({ name: "dashboard" })
+}
+const showLoader = () => {
+    loaderBtn.start('validating account. Please wait');
 }
 const validateEmail = () => {
     const emailRegex = /\S+@\S+\.\S+/;

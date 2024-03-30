@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import { ref } from 'vue';
 import { start } from '@/stores/init';
+import Loader from '@/components/utils/Loader.vue';
 const loaded = ref(false)
 const router = useRouter();
 authorized()
@@ -38,6 +39,7 @@ authorized()
       </nav>
     </div>
   </header> -->
+    <Loader />
     <v-snackbar v-model="snackbar" :color="snackColor" tile location="top right">
       <span>{{ snackMessage }}</span>
       <template v-slot:actions>
