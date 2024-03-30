@@ -121,7 +121,7 @@ const proceedLogin = (user) => {
         saveSession();
     }
     insertUser(user);
-    router.push({ name: "info" })
+    router.push({ name: "dashboard" })
 }
 const validateEmail = () => {
     const emailRegex = /\S+@\S+\.\S+/;

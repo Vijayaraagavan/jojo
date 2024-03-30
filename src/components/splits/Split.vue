@@ -1,6 +1,6 @@
 <template>
     <v-row>
-        <v-col>
+        <v-col :cols="$vuetify.display.xs ? 12 : 6">
             <v-card flat max-width="400" color="transparent">
                 <Create reactive="true" @split-input="getSplitInput" :total-amount="totalAmount" :old-title="oldTitle"
                     :old-date="oldDate" :old-category="oldCategory" v-if="createLoader" />
@@ -8,7 +8,7 @@
                 <v-btn v-else color="success" block class="mt-2" @click="createSplit()">Add</v-btn>
             </v-card>
         </v-col>
-        <v-col>
+        <v-col :cols="$vuetify.display.xs ? 12 : 6">
             <v-card max-width="400" color="transparent">
                 <v-toolbar class="px-2">
                     <div class="d-flex align-center" style="width: 80%;">
@@ -53,7 +53,7 @@
                                                         <h3 class="font-weight-bold success--text text-success"
                                                             color="success">
                                                             {{
-                        u.amount }}</h3>
+            u.amount }}</h3>
                                                     </div>
                                                 </v-col>
                                                 <v-col cols="2">
@@ -82,7 +82,7 @@
                                                     <h3 class="font-weight-bold success--text text-success"
                                                         color="success">
                                                         {{
-                        u.amount }}</h3>
+            u.amount }}</h3>
                                                 </div>
                                             </v-col>
                                             <v-col cols="2">
