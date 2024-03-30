@@ -128,13 +128,13 @@ const initTime = () => {
     time.value = tToStr(Date.now());
 }
 onMounted(() => {
-    const uid = user.id;
+    let uid = user.id;
     if (params.groupId) {
         uid = params.groupId;
     }
     getCategories(uid)
         .then((v) => {
-            categories.value = v
+            categories.value = v.filter(i => i.active == true);
             categoryId.value = categories.value[0].uid
         })
     initTime();
