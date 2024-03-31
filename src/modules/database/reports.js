@@ -26,10 +26,12 @@ export const getGroupTransactions = async (id, filter) => {
       if (userIds.length) {
         fullUsers = await getGroupUsers(userIds)
       }
+      const formattedSpent = formatSpent(spentResp, fullUsers)
       s({
         transactionWise: transactionWise(resp),
         categoryWise: categoryWise(resp, categories),
-        spentWise: formatSpent(spentResp, fullUsers)
+        spentWise: formattedSpent,
+        settlement: settlementWise(spentResp, fullUsers)
       })
     })
   })
@@ -111,6 +113,7 @@ const addProvider = (spent, provide, total) => {
       consumed: 0
     }
   }
+  spent[provide.uid].net = spent[provide.uid].expense - spent[provide.uid].consumed
 }
 const addConsumer = (spent, consumer) => {
   if (!consumer) {
@@ -124,6 +127,7 @@ const addConsumer = (spent, consumer) => {
       consumed: consumer.amount
     }
   }
+  spent[consumer.uid].net = spent[consumer.uid].expense - spent[consumer.uid].consumed
 }
 
 const formatSpent = (spentResp, users) => {
@@ -133,4 +137,71 @@ const formatSpent = (spentResp, users) => {
     result[user.displayName] = spentResp[key]
   }
   return result
+}
+
+const settlementWise = (spentResp, fullUsers) => {
+  let result = []
+  const loaner = []
+  const debter = []
+  for (const k in spentResp) {
+    const e = spentResp[k]
+    if (e.net > 0) {
+      loaner.push({ uid: k, net: e.net })
+    } else {
+      debter.push({ uid: k, net: e.net })
+    }
+  }
+  loaner.sort(netSort)
+  debter.sort(netSort)
+  settle(loaner, debter, result)
+  return formatSettled(result, fullUsers)
+}
+
+const netSort = (a, b) => {
+  if (a.net > b.net) return 1
+  if (a.net < b.net) return -1
+  if (a.net == b.net) return -1
+}
+
+const settle = (l, d, resp) => {
+  if (l.length == 0 || d.length == 0) {
+    return resp
+  }
+  const take = l.pop()
+  const give = d.pop()
+  const pnet = give.net * -1
+  if (take.net > pnet) {
+    const diff = take.net - pnet
+    take.net = diff
+    resp.push({ give: give.uid, take: take.uid, net: pnet })
+    l.push(take)
+    settle(l, d, resp)
+  } else if (take.net < pnet) {
+    resp.push({ give: give.uid, take: take.uid, net: take.net })
+    give.net += take.net
+    d.push(give)
+    settle(l, d, resp)
+  } else {
+    resp.push({ give: give.uid, take: take.uid, net: take.net })
+  }
+}
+
+const formatSettled = (spent, users) => {
+  const resp = []
+  spent.forEach((s) => {
+    const giveUser = users.find((i) => i.uid == s.give)
+    const takeUser = users.find((i) => i.uid == s.take)
+    resp.push({
+      give: {
+        displayName: giveUser.displayName,
+        color: giveUser.color
+      },
+      take: {
+        displayName: takeUser.displayName,
+        color: takeUser.color
+      },
+      net: s.net
+    })
+  })
+  return resp
 }

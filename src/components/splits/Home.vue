@@ -1,12 +1,12 @@
 <template>
     <v-container fluid class="pa-0" width="90vw">
         <NewGroup :first="!groups.length" />
-        <v-card v-if="groups.length">
+        <v-card v-if="groups.length" flat>
             <v-tabs v-model="tab" bg-color="primary" @update:modelValue="changeTab()">
                 <v-tab :value="t.docId" v-for="t in groups">{{ t.name }}</v-tab>
             </v-tabs>
 
-            <v-card-text>
+            <v-card-text class="pa-0">
                 <Group v-model:group="currentGroup" />
             </v-card-text>
         </v-card>

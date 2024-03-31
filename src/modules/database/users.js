@@ -16,14 +16,20 @@ export const insert = (user) => {
   // console.log('adding user', data)
   // const docRef = doc(db, 'users', user.uid)
   const q = query(clRef, where('uid', '==', user.uid))
-  getDocs(q).then((snap) => {
-    if (snap.docs.length == 1) {
-      const d = snap.docs[0]
-      console.log(snap, snap.docs.length, snap.docs[0].data(), d)
-      updateDoc(d.ref, data)
-    } else {
-      addDoc(clRef, data)
-    }
+  return new Promise((s, f) => {
+    getDocs(q).then((snap) => {
+      if (snap.docs.length == 1) {
+        const d = snap.docs[0]
+        console.log(snap, snap.docs.length, snap.docs[0].data(), d)
+        updateDoc(d.ref, data)
+          .then(() => s())
+          .catch(() => f())
+      } else {
+        addDoc(clRef, data)
+          .then(() => s())
+          .catch(() => f())
+      }
+    })
   })
 }
 

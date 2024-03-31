@@ -4,7 +4,7 @@
             prepend-inner-icon="mdi-domain" class="mt-2" @update:model-value="select()" hide-details=""
             density="compact"></v-autocomplete>
     </v-card>
-    <v-menu offset-y location="start">
+    <v-menu offset-y location="start" v-if="selects.length > 1">
         <template v-slot:activator="{ props }">
             <v-btn color="success" v-bind="props" icon
                 style="position: absolute; right: 40px; top: 87px;"><v-icon>mdi-plus</v-icon></v-btn>
@@ -16,6 +16,8 @@
             </v-list-item>
         </v-list>
     </v-menu>
+    <v-btn color="success" v-if="selects.length == 1" icon style="position: absolute; right: 40px; top: 87px;"
+        @click="routeTo(selects[0])"><v-icon>mdi-plus</v-icon></v-btn>
     <Private v-if="selectedId == userId && !loader" :uid="userId" />
     <Group v-if="selectedId != userId && !loader" :uid="selectedId" />
 </template>

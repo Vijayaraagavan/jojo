@@ -124,10 +124,13 @@ const proceedLogin = (user) => {
     if (remember.value) {
         saveSession();
     }
-    insertUser(user);
-    loaderBtn.stop();
-    verifySettings(user.uid)
-    router.push({ name: "dashboard" })
+    insertUser(user)
+        .then(() => {
+            verifySettings(user.uid)
+            router.push({ name: "dashboard" })
+        })
+        .finally(() => loaderBtn.stop())
+
 }
 const showLoader = () => {
     loaderBtn.start('validating account. Please wait');
