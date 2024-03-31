@@ -4,13 +4,14 @@
             <v-card flat max-width="400" color="transparent">
                 <Create reactive="true" @split-input="getSplitInput" :total-amount="totalAmount" :old-title="oldTitle"
                     :old-date="oldDate" :old-category="oldCategory" v-if="createLoader" />
-                <v-btn v-if="props.updateSplit" color="success" block class="mt-2" @click="createSplit()">Update</v-btn>
-                <v-btn v-else color="success" block class="mt-2" @click="createSplit()">Add</v-btn>
+                <v-btn v-if="props.updateSplit" color="success" :disabled="!rules" block class="mt-2"
+                    @click="createSplit()">Update</v-btn>
+                <v-btn v-else color="success" block class="mt-2" :disabled="!rules" @click="createSplit()">Add</v-btn>
             </v-card>
         </v-col>
         <v-col :cols="$vuetify.display.xs ? 12 : 6">
             <v-card max-width="400" color="transparent">
-                <v-toolbar class="px-2">
+                <v-toolbar class="px-4">
                     <div class="d-flex align-center" style="width: 80%;">
                         <h3 class="mr-3">Who Paid</h3>
                         <v-autocomplete v-model="payer" class="flex-grow-1" :items="users" item-title="displayName"
@@ -32,14 +33,18 @@
                 <v-card-text class="pa-0">
                     <v-expansion-panels color="error">
                         <v-expansion-panel expand focusable bg-color="transparent">
-                            <v-expansion-panel-title class="d-block mb-0 pa-0 pt-2">
+                            <v-expansion-panel-title class="d-block mb-0 pa-0">
                                 <template v-slot:actions>
                                     <!-- <v-icon>mdi-close</v-icon> -->
                                 </template>
-                                <template v-slot:default="actionsProps" style="display: block;">
-                                    <div class="d-flex justify-space-between">
-                                        <v-btn color="success" variant="outlined" @click.stop="openCalc()">Edit</v-btn>
-                                        <v-btn icon flat density="compact"><v-icon>mdi-chevron-down</v-icon></v-btn>
+                                <template v-slot:default="actionsProps">
+                                    <div class="d-flex justify-space-between pa-2 pr-5"
+                                        style="background-color: rgb(var(--v-theme-surface-light));">
+                                        <v-btn color="primary" @click.stop="openCalc()" class="pl-2"
+                                            variant="text">Split by
+                                            amount</v-btn>
+                                        <v-btn icon flat density="compact"
+                                            class="mt-1"><v-icon>mdi-chevron-down</v-icon></v-btn>
                                     </div>
                                     <v-card v-for="u in users.slice(0, 2)" class="my-2 align-center">
                                         <v-card-text>
@@ -99,8 +104,8 @@
             </v-card>
         </v-col>
     </v-row>
-    <v-dialog v-model="dialog" scrollable persistent :overlay="false" max-width="400px" transition="dialog-transition">
-        <v-card color="black" height="90vh">
+    <v-dialog v-model="dialog" scrollable :overlay="false" max-width="400px" transition="dialog-transition">
+        <v-card height="90vh">
             <v-toolbar class="px-2">
                 <div class="d-flex align-center" style="width: 100%;">
                     <h3 class="mr-3">Who Paid</h3>
@@ -119,7 +124,7 @@
                         v-model="totalAmount" @input="calculateBox()"></v-text-field>
                 </div>
             </v-toolbar>
-            <v-card-text>
+            <v-card-text class="pa-0">
                 <h4 class="text-error" v-if="!valid">!Enter valid amount</h4>
                 <v-card v-for="(u, idx) in users" class="my-2 align-center">
                     <v-card-text>
@@ -153,6 +158,10 @@
                     </v-card-text>
                 </v-card>
             </v-card-text>
+            <v-card-actions class="py-0">
+                <v-spacer></v-spacer>
+                <v-btn color="success" @click="close()">ok</v-btn>
+            </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
@@ -166,6 +175,7 @@ import { useRoute } from 'vue-router';
 import { showSnack } from '@/composables/snackbar';
 const props = defineProps(['updateSplit']);
 import { useRouter } from 'vue-router';
+import { computed } from 'vue';
 const router = useRouter();
 const route = useRoute();
 const group = ref({});
@@ -179,7 +189,12 @@ const oldTitle = ref('');
 const oldDate = ref(null);
 const oldCategory = ref(null);
 const createLoader = ref(false);
-
+const rules = computed(() => {
+    if (totalAmount.value <= 0) {
+        return false;
+    }
+    return true;
+})
 const childData = {
     title: '',
     date: null
