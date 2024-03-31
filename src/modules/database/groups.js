@@ -94,8 +94,7 @@ export const getGroupUsers = (memberIds) => {
         snap.docs.forEach((d) => {
           users.push({
             ...d.data(),
-            id: d.id,
-            color: Math.floor(Math.random() * 16777215).toString(16)
+            id: d.id
           })
         })
         s(users)

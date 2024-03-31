@@ -21,6 +21,9 @@ export const insert = (user) => {
       if (snap.docs.length == 1) {
         const d = snap.docs[0]
         console.log(snap, snap.docs.length, snap.docs[0].data(), d)
+        if (d.data().color) {
+          data.color = d.data().color
+        }
         updateDoc(d.ref, data)
           .then(() => s())
           .catch(() => f())
@@ -93,6 +96,24 @@ const marshallUser = (u) => {
     displayName: dName,
     phoneNumber: u.phoneNumber,
     photoURL: u.photoURL,
-    customName: cuser[0]
+    customName: cuser[0],
+    color: generateRandomDarkColor()
   }
+}
+
+const generateRandomDarkColor = () => {
+  // Generate random values for red, green, and blue components
+  var red = Math.floor(Math.random() * 128) // Limiting to half of the range to ensure dark colors
+  var green = Math.floor(Math.random() * 128)
+  var blue = Math.floor(Math.random() * 128)
+
+  // Convert RGB components to hexadecimal
+  var redHex = red.toString(16).padStart(2, '0')
+  var greenHex = green.toString(16).padStart(2, '0')
+  var blueHex = blue.toString(16).padStart(2, '0')
+
+  // Concatenate components to form the color code
+  var color = redHex + greenHex + blueHex
+
+  return color
 }
