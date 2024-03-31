@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "firebase:dev": "FIRESTORE_EMULATOR_PERSISTENCE=true firebase emulators:start --only firestore,auth --import=./firebase/data --export-on-exit"
+    "firebase:dev": "FIRESTORE_EMULATOR_PERSISTENCE=true firebase emulators:start --only firestore,auth --import=./firebase/data --export-on-exit",
+    "deploy": "firebase deploy --only hosting"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
