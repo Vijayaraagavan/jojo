@@ -49,7 +49,7 @@ onMounted(fetchDocs)
         <SideNav class="" v-model:nav="showNav" />
 
         <!-- v-layout doesn't occupy full-height unlike v-app. so use 100dvh in v-main -->
-        <v-main class="ma-2" :style="{ width: $vuetify.display.mdAndUp ? '85%' : '100%' }" style="height: 100dvh;">
+        <v-main class="mt-2" :style="{ width: $vuetify.display.mdAndUp ? '85%' : '100%' }" style="height: 100dvh;">
             <router-view></router-view>
         </v-main>
     </v-container>

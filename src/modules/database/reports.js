@@ -7,7 +7,8 @@ export const getAllTransaction = (id, filter) => {
       getCategories(id[0], 'all').then((categories) => {
         s({
           transactionWise: transactionWise(resp),
-          categoryWise: categoryWise(resp, categories)
+          categoryWise: categoryWise(resp, categories),
+          available: resp.length >= 1
         })
       })
     })
@@ -31,7 +32,8 @@ export const getGroupTransactions = async (id, filter) => {
         transactionWise: transactionWise(resp),
         categoryWise: categoryWise(resp, categories),
         spentWise: formattedSpent,
-        settlement: settlementWise(spentResp, fullUsers)
+        settlement: settlementWise(spentResp, fullUsers),
+        available: resp.length >= 1
       })
     })
   })

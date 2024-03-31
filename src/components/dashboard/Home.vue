@@ -1,21 +1,27 @@
 <template>
-    <v-card flat :width="$vuetify.display.xs ? 260 : 300" class="pa-0 mb-2 d-flex justify-end">
-        <v-autocomplete :items="selects" item-title="name" item-value="uid" v-model="selectedId"
-            prepend-inner-icon="mdi-domain" class="mt-2" @update:model-value="select()" hide-details=""
-            density="compact"></v-autocomplete>
-    </v-card>
-    <v-menu offset-y location="start" v-if="selects.length > 1">
-        <template v-slot:activator="{ props }">
-            <v-btn color="success" v-bind="props" icon
-                style="position: absolute; right: 40px; top: 87px;"><v-icon>mdi-plus</v-icon></v-btn>
-        </template>
+    <v-row style="width: 365px;">
+        <v-col cols="9">
+            <v-card flat class="pa-0 mb-2 d-flex justify-end">
+                <v-autocomplete :items="selects" item-title="name" item-value="uid" v-model="selectedId"
+                    prepend-inner-icon="mdi-domain" class="mt-2" @update:model-value="select()" hide-details=""
+                    density="compact"></v-autocomplete>
+            </v-card>
+        </v-col>
+        <v-col cols="3">
+            <v-menu offset-y location="bottom" v-if="selects.length > 1">
+                <template v-slot:activator="{ props }">
+                    <v-btn color="success" v-bind="props" icon><v-icon>mdi-plus</v-icon></v-btn>
+                </template>
 
-        <v-list>
-            <v-list-item v-for="item in selects" :key="item.id" @click="routeTo(item)">
-                <v-list-item-title>{{ item.name }}</v-list-item-title>
-            </v-list-item>
-        </v-list>
-    </v-menu>
+                <v-list>
+                    <v-list-item v-for="item in selects" :key="item.id" @click="routeTo(item)" class="">
+                        <v-list-item-title>{{ item.name }}</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
+
+        </v-col>
+    </v-row>
     <v-btn color="success" v-if="selects.length == 1" icon style="position: absolute; right: 40px; top: 87px;"
         @click="routeTo(selects[0])"><v-icon>mdi-plus</v-icon></v-btn>
     <Private v-if="selectedId == userId && !loader" :uid="userId" />
