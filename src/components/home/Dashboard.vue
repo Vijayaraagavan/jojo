@@ -46,18 +46,10 @@ onMounted(fetchDocs)
                 </v-col>
             </v-row>
         </v-app-bar>
-        <v-navigation-drawer v-model="showNav" absolute temporary class="bg-indigo bg-lighten-3" theme="dark"
-            style="top: 15px;">
-            <SideNav class="mt-4" v-model:nav="showNav" />
-            <template v-slot:append>
-                <div class="pa-2 d-flex justify-center ml-4">
-                    <v-btn block>
-                        Logout
-                    </v-btn>
-                </div>
-            </template>
-        </v-navigation-drawer>
-        <v-main class="ma-2" :style="{ width: $vuetify.display.mdAndUp ? '85%' : '100%' }">
+        <SideNav class="" v-model:nav="showNav" />
+
+        <!-- v-layout doesn't occupy full-height unlike v-app. so use 100dvh in v-main -->
+        <v-main class="ma-2" :style="{ width: $vuetify.display.mdAndUp ? '85%' : '100%' }" style="height: 100dvh;">
             <router-view></router-view>
         </v-main>
     </v-container>

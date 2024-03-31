@@ -58,9 +58,14 @@ body {
   background-image: url("../src/assets/bg.jpg") !important;
   background-position: center;
   background-size: cover;
+  background-repeat: repeat-y;
 }
 
-header {
+.firebase-emulator-warning {
+  display: none;
+}
+
+/* header {
   line-height: 1.5;
   max-height: 100vh;
 }
@@ -120,5 +125,5 @@ nav a:first-of-type {
     padding: 1rem 0;
     margin-top: 1rem;
   }
-}
+} */
 </style>

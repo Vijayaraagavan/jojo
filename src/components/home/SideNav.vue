@@ -47,19 +47,28 @@ const routeTo = (i) => {
 </script>
 
 <template>
-    <v-list>
-        <template v-for="i in index">
-            <v-list-item v-if="!i.children" :key="i.id" :title="i.title" color="transparent" class="text-start pl-7"
-                @click="routeTo(i)">
-            </v-list-item>
-            <v-list-group v-if="i.children" :value="i.title" class="text-start px-3">
-                <template v-slot:activator="{ props }">
-                    <v-list-item v-bind="props" :title="i.title"></v-list-item>
-                </template>
-                <v-list-item v-for="c in i.children" :title="c.title" color="transparent" class="text-start px-3"
-                    @click="routeTo(c)">
+    <v-navigation-drawer v-model="nav" fixed temporary class="bg-indigo bg-lighten-3" theme="dark">
+        <!-- <template v-slot:append>
+            <div class="pa-2 d-flex justify-center ml-4">
+                <v-btn block>
+                    Logout
+                </v-btn>
+            </div>
+        </template> -->
+        <v-list>
+            <template v-for="i in index">
+                <v-list-item v-if="!i.children" :key="i.id" :title="i.title" color="transparent" class="text-start pl-7"
+                    @click="routeTo(i)">
                 </v-list-item>
-            </v-list-group>
-        </template>
-    </v-list>
+                <v-list-group v-if="i.children" :value="i.title" class="text-start px-3">
+                    <template v-slot:activator="{ props }">
+                        <v-list-item v-bind="props" :title="i.title"></v-list-item>
+                    </template>
+                    <v-list-item v-for="c in i.children" :title="c.title" color="transparent" class="text-start px-3"
+                        @click="routeTo(c)">
+                    </v-list-item>
+                </v-list-group>
+            </template>
+        </v-list>
+    </v-navigation-drawer>
 </template>
