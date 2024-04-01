@@ -4,7 +4,7 @@
             Setttlement
         </v-card-title>
         <v-card-text class="pa-0">
-            <v-card v-for="(i, idx) in data" :key="idx" class="elevation-10">
+            <v-card v-for="(i, idx) in data" :key="idx" class="elevation-3">
                 <v-card-text class="d-flex">
                     <v-row class="align-center justify-center">
                         <div class="mr-2 d-inline-block">

@@ -48,13 +48,13 @@ const routeTo = (i) => {
 
 <template>
     <v-navigation-drawer v-model="nav" fixed temporary class="bg-indigo bg-lighten-3" theme="dark">
-        <!-- <template v-slot:append>
+        <template v-slot:append>
             <div class="pa-2 d-flex justify-center ml-4">
-                <v-btn block>
+                <v-btn block @click="$emit('logout')">
                     Logout
                 </v-btn>
             </div>
-        </template> -->
+        </template>
         <v-list>
             <template v-for="i in index">
                 <v-list-item v-if="!i.children" :key="i.id" :title="i.title" color="transparent" class="text-start pl-7"

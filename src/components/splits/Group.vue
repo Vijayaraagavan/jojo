@@ -13,8 +13,8 @@
                     <v-spacer></v-spacer>
                     <v-btn color="success" icon @click="newSplit()"><v-icon>mdi-plus</v-icon></v-btn>
                 </v-col>
-                <v-col xs="12" sm="12" md="6" lg="4">
-                    <SettleChart v-if="loading" :data="reports.settlement" />
+                <v-col xs="12" sm="12" md="6" lg="4" v-if="loading && reports.available && reports.settlement.length">
+                    <SettleChart :data="reports.settlement" />
                 </v-col>
                 <v-col xs="12" sm="12" md="6" lg="4">
                     <Categories :uid="group.docId" v-if="group.docId" />
@@ -31,6 +31,7 @@ import { getGroupTransactions } from '@/modules/database/reports.js'
 import SettleChart from '@/components/dashboard/SettleChart.vue'
 import { ref } from 'vue';
 import { onMounted } from 'vue';
+import { watch } from 'vue';
 const router = useRouter();
 const group = defineModel('group');
 const copied = ref(false);
@@ -46,7 +47,7 @@ const copy = () => {
 const newSplit = () => {
     router.push({ name: 'split', params: { groupId: group.value.docId } });
 }
-onMounted(() => {
+const get = () => {
     const today = new Date()
     const tenDaysBefore = new Date(today);
     tenDaysBefore.setDate(today.getDate() - 7);
@@ -56,5 +57,9 @@ onMounted(() => {
             reports.value = resp;
             loading.value = true;
         })
+}
+onMounted(() => {
+    get();
 })
+watch(group, get);
 </script>

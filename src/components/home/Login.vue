@@ -118,8 +118,9 @@ const providerLogin = (id) => {
 }
 const proceedLogin = (user) => {
     showSnack("Login successfull");
-    const { setId } = useUserStore();
+    const { setId, setName } = useUserStore();
     setId(user.uid);
+    setName(user.displayName);
     console.log(remember.value)
     if (remember.value) {
         saveSession();

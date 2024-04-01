@@ -167,16 +167,16 @@ export const groupTransactions = (uid, filters = { search: '' }) => {
         return
       }
       let q = query(clRef, where('groupId', 'in', user.groups), orderBy('dateTime', 'desc'))
-      if (filters.search != '' && !!filters.search && filters.id == 'title') {
-        let end = filters.search + '\uf8ff'
-        q = query(q, where(filter.id, '>=', filters.search), where(filter.id, '<=', end))
-      }
+      // if (filters.search != '' && !!filters.search && filters.id == 'title') {
+      //   let end = filters.search + '\uf8ff'
+      //   q = query(q, where(filter.id, '>=', filters.search), where(filter.id, '<=', end))
+      // }
       // if (options.filter.id == 'amount') {
       //   q = query(q, where(options.filter.id, '==', Number(search)))
       // }
-      if (filters.dateFrom) {
-        q = query(q, where('dateTime', '>=', filters.dateFrom))
-      }
+      // if (filters.dateFrom) {
+      //   q = query(q, where('dateTime', '>=', filters.dateFrom))
+      // }
       getDocs(q)
         .then((snap) => {
           snap.docs.forEach((d) => {

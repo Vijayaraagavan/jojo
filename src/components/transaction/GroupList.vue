@@ -33,7 +33,9 @@
                 <tr @click="showInfo(item)" style="cursor: pointer;">
                     <td>{{ item.id }}</td>
                     <td>{{ item.title }}</td>
-                    <SplitIcons :members="item.group" class="pt-2" />
+                    <td>
+                        <SplitIcons :members="item.group" class="" />
+                    </td>
                     <td>{{ item.category }}</td>
                     <td>{{ item.amount }}</td>
                     <td>{{ item.dateTime }}</td>

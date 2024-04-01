@@ -13,9 +13,12 @@ const router = useRouter();
 authorized()
   .then((s) => {
     const user = useUserStore();
-    user.setId(s.uid);
-    start()
-      .then(() => loaded.value = true)
+    user.setId(s.uid)
+      .then(() => {
+        user.setName(s.displayName);
+        start()
+          .then(() => loaded.value = true)
+      })
   })
   .catch((f) => {
     console.log("no saved", f);

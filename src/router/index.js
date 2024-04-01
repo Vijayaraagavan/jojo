@@ -26,7 +26,7 @@ const router = createRouter({
       component: () => import('@/components/home/Dashboard.vue'),
       children: [
         {
-          path: '',
+          path: 'info',
           name: 'info',
           component: Info
         },
@@ -66,7 +66,7 @@ const router = createRouter({
           component: () => import('@/components/settings/Home.vue')
         },
         {
-          path: 'dashboard',
+          path: '',
           name: 'dashboard',
           component: () => import('@/components/dashboard/Home.vue')
         }
