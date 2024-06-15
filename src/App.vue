@@ -15,10 +15,11 @@ const router = useRouter();
 
 const startUserFlow = (u) => {
   userflow.init('ct_lfxj6ux5xbg4hjeetltlsedo6i')
-  userflow.identify(s.uid, {
-    name: s.displayName,
-    email: s.email,
-    signed_up_at: s.metadata && s.metadata.createdAt
+  userflow.identify(u.uid, {
+    name: u.displayName,
+    email: u.email,
+    signed_up_at: u.metadata && u.metadata.createdAt && (new Date(Number(u.metadata.createdAt))).toISOString()
+
   })
 }
 
